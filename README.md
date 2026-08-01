@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/1319205852.svg)](https://doi.org/10.5281/zenodo.21739198)
+
 # Averaging in separating union-closed families of height four
 
 Companion repository for the preprint
@@ -125,8 +127,15 @@ Full raw output is in [RESULTS.md](RESULTS.md). Summary:
 
 ## Citing
 
-If you use this work, please cite the preprint. A BibTeX entry will be added
-once the arXiv identifier is assigned.
+@software{kilinc2026heightfour,
+  author       = {K{\i}l{\i}n\c{c}, Yavuz Selim},
+  title        = {Averaging in separating union-closed families of height four:
+                  the height-four case},
+  year         = {2026},
+  publisher    = {Zenodo},
+  doi          = {10.5281/zenodo.21739198},
+  url          = {https://doi.org/10.5281/zenodo.21739198}
+}
 
 ## Use of AI assistance
 
