@@ -1,0 +1,1462 @@
+\documentclass[11pt,a4paper]{amsart}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage[margin=1.1in]{geometry}
+\usepackage{booktabs}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+\usepackage{xurl}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\A}{\mathcal{A}}
+\newcommand{\B}{\mathcal{B}}
+\newcommand{\Cc}{\mathcal{C}}
+\newcommand{\Mm}{\mathcal{M}}
+\newcommand{\Nn}{\mathcal{N}}
+\newcommand{\Yy}{\mathcal{Y}}
+\newcommand{\Avg}{\operatorname{Avg}}
+\newcommand{\Cp}{\Cc^{+}}
+\DeclareMathOperator{\wt}{w}
+
+\begin{document}
+
+\title[Averaging in separating union-closed families of height four]
+{Averaging in separating union-closed families of height four:\\ the height-four case}
+
+\author{Yavuz Selim K\i l\i n\c{c}}
+\address{Independent researcher, T\"urkiye}
+\email{yavuzselim18mart@gmail.com}
+
+\subjclass[2020]{05D05, 06A07}
+\keywords{Frankl's conjecture, union-closed sets conjecture, averaging, separating family, height}
+
+\begin{abstract}
+Let $\A\subseteq 2^{[n]}$ be a separating union-closed family whose longest chain
+consists of exactly four member sets. Bouchard proved that
+$\Avg(\A)\ge n/2$ holds for such families when $|\B|\le 2$, where $\B$ is a smallest
+irredundant subfamily of $\A_{<n/2}$ spanning the same base set, and left the
+range $3\le|\B|\le4$ open. We prove the full height-four case.
+
+Writing $T$ for the set of $x$ with $[n]\setminus\{x\}\in\A$ and $t=|T|$, we first
+prove structural lemmas about the core
+$\Cc=\A\setminus(\{[n]\}\cup\{[n]\setminus\{x\}:x\in T\})$ and deduce a master
+inequality
+\[
+  \sum_{\substack{A\in\A\\2|A|<n}}\bigl(n-2|A|\bigr)
+  \le
+  (t+1)\,\bigl|\{A\in\A:2|A|<n\}\bigr|.
+\]
+This gives $\Avg(\A)\ge n/2$ whenever $n\ge4t+4$, and reduces the remaining
+problem to the window $n\le4t+3$. We then introduce a pair-line structure on the
+small member sets $\Cp=\{A\in\A:2|A|<n\}$: two small sets either lie on a unique
+maximal core line or form a rigid external pair. Combining line capacity, a
+Fisher-type count of maximal core complements, and a local bound around a
+largest small set, we prove the residual inequality
+\[
+  \sum_{A\in\Cp}(n-2|A|)\le t(n-2)+n
+\]
+for all $n,t$. Consequently
+\[
+  \Avg(\A)\ge \frac n2
+\]
+for every separating union-closed family of height four. Equivalently, Frankl's
+conjecture holds for all separating union-closed families of height four.
+\end{abstract}
+
+\maketitle
+
+\section{Introduction}
+
+A finite family $\A$ of finite sets is \emph{union-closed} if $X,Y\in\A$ implies
+$X\cup Y\in\A$. We always denote its base set $\bigcup_{A\in\A}A$ by
+$[n]=\{1,\dots,n\}$ and assume $|\A|\ge2$; union-closedness then gives $[n]\in\A$.
+Frankl's union-closed sets conjecture~\cite{Frankl95,BruhnSchaudt} asserts that
+some element of $[n]$ lies in at least $|\A|/2$ member sets. Despite the constant
+lower bounds obtained after Gilmer's breakthrough~\cite{Gilmer,Sawin,AHS}, the
+conjecture itself remains open.
+
+Following the standard double-counting identity
+$\sum_{x\in[n]}|\A_x|=\sum_{A\in\A}|A|$ (see~\cite[\S6]{BruhnSchaudt}), the
+\emph{averaging approach} replaces the conjecture by the stronger statement
+\begin{equation}\label{eq:avg}
+  \Avg(\A):=\frac1{|\A|}\sum_{A\in\A}|A|\ge\frac n2.
+\end{equation}
+Inequality~\eqref{eq:avg} is false for general union-closed families, and
+Reimer's average set size theorem~\cite{Reimer} shows what can be salvaged in
+general; the scope of averaging has been mapped out by Cz\'edli and
+coauthors~\cite{Czedli09,CzedliMS} and, recently, in a formally verified
+setting~\cite{HachimoriKashiwabara}. The natural class on which~\eqref{eq:avg}
+does have a chance is that of \emph{separating} families: $\A$ is separating if
+for all distinct $x,y\in[n]$ some $A\in\A$ contains exactly one of them.
+Restricting the conjecture to separating families costs nothing.
+
+A \emph{chain} in $\A$ is a subfamily that is totally ordered by inclusion, and
+the \emph{height} $h=h(\A)$ is the maximum number of member sets in a chain.
+(We follow the convention of~\cite{Bouchard,Tian}: the height counts \emph{sets},
+not covering relations. Thus $h\le3$ means that no four member sets form a
+chain.) Frankl's conjecture is known for $h\le3$~\cite{Tian}, and for separating
+families the stronger inequality~\eqref{eq:avg} is known in that range as
+well~\cite[Thm.~1.4]{Bouchard}. The height-four case is the first genuinely
+nontrivial one, and it is also the last one for which averaging can possibly
+work: Bouchard constructs, for every $h\ge5$ and every sufficiently large $n$,
+separating union-closed families with $\Avg(\A)<n/2$~\cite[Thm.~3.2]{Bouchard}.
+In other words, $h=4$ is exactly the boundary of the method.
+
+For $h=4$ the previous state of the art was~\cite[Thm.~2.1]{Bouchard}: writing
+$\B$ for a smallest irredundant subfamily of $\A_{<n/2}$ with the same base set
+as $\A_{<n/2}$, one always has $0\le|\B|\le h$, and~\eqref{eq:avg} holds for
+separating union-closed families with $h=4\le n$ and $|\B|\le2$. The remaining
+cases $|\B|\in\{3,4\}$ were open. The present paper closes them.
+
+\subsection*{Results of this paper}
+
+We attack the class through a different parameter. Let
+\[
+  T:=\{x\in[n]:[n]\setminus\{x\}\in\A\},\qquad t:=|T|,
+\]
+\[
+  Z:=[n]\setminus T,\qquad m:=|Z|=n-t,
+\]
+let $\Yy:=\{[n]\setminus\{x\}:x\in T\}$ be the family of \emph{coatoms}, and let
+\[
+  \Cc:=\A\setminus(\{[n]\}\cup\Yy)
+\]
+be the \emph{core}. Section~\ref{sec:struct} proves structural facts about $\Cc$
+(Lemmas~\ref{lem:under}--\ref{lem:P}), of which the key new ingredient is that
+every maximal member of the core misses at most one element of $Z$
+(Lemma~\ref{lem:Zminus}). These combine into a pair inequality
+(Lemma~\ref{lem:P}) and yield the master inequality
+(Theorem~\ref{thm:master}).
+
+The master inequality gives several unconditional consequences:
+$\Avg(\A)\ge n/2$ whenever $n\ge4t+4$ (Theorem~\ref{thm:A}); whenever
+$(t+1)q\le t(n-2)+n$ (Theorem~\ref{thm:B}); and whenever $t\le2$
+(Theorem~\ref{thm:t2-final}). The large-$n$ theorem confines the problem to the
+window $n\le4t+3$.
+
+The main new part is Section~\ref{sec:closing}. There we analyse the pair
+structure of
+\[
+  \Cp:=\{A\in\A:2|A|<n\}.
+\]
+Two distinct members of $\Cp$ either lie on a unique maximal core line or form a
+rigid external pair (Lemma~\ref{lem:pair}). This line structure, together with a
+capacity bound (Lemma~\ref{lem:cap}), a Fisher-type count
+(Lemmas~\ref{lem:fisher}--\ref{lem:q}), and a local bound around a largest small
+set (Lemma~\ref{lem:local}), proves the residual inequality
+\[
+  \Phi^+:=\sum_{A\in\Cp}(n-2|A|)\le t(n-2)+n
+\]
+for all $n,t$ (Theorem~\ref{thm:window} and Corollary~\ref{cor:residual}). By
+Proposition~\ref{prop:reform}, this is equivalent to $\Avg(\A)\ge n/2$.
+
+Thus the main theorem is the following.
+
+\begin{theorem}[Main theorem; Theorem~\ref{thm:main}]
+Let $\A\subseteq2^{[n]}$ be separating and union-closed with $h(\A)=4$. Then
+\[
+  \Avg(\A)\ge\frac n2.
+\]
+Equivalently, Frankl's conjecture holds for all separating union-closed families
+of height four.
+\end{theorem}
+
+Two features of the proof are worth noting. First, it is insensitive to
+$|\B|$: the extremal family of Example~\ref{ex:sharp} has $|\B|=3$, i.e.\ it lies
+in the range left open in~\cite{Bouchard}, and the master inequality covers it
+with equality. Second, the simple counting bound $q\le n-2$ is not available in
+the residual window: Proposition~\ref{prop:qcex} constructs, for every even
+$n\ge6$, a separating union-closed family of height four with $t=n$, $q=n$, and
+$\Phi^+=2n$. The proof therefore bounds $\Phi^+$ directly, line by line, rather
+than through $q$ alone.
+
+\section{Preliminaries}\label{sec:prelim}
+
+Throughout, $\A\subseteq2^{[n]}$ is union-closed with base set $[n]$ and
+$|\A|\ge2$, so $[n]\in\A$. For $A\subseteq[n]$ we write $A^c:=[n]\setminus A$
+and define the \emph{weight}
+\[
+  \wt(A):=n-2|A|.
+\]
+Thus $\wt(A)>0$ exactly when $|A|<n/2$. We abbreviate
+\[
+  \Phi:=\sum_{A\in\Cc}\wt(A),\qquad
+  \Cp:=\{A\in\Cc:\wt(A)>0\},\qquad
+  q:=|\Cp|,\qquad
+  \Phi^+:=\sum_{A\in\Cp}\wt(A).
+\]
+Note that $\Cp=\{A\in\A:2|A|<n\}=\A_{<n/2}$ whenever $n\ge3$, because $[n]$ and
+the coatoms have size at least $n-1\ge n/2$. Clearly $\Phi\le\Phi^+$.
+
+\begin{proposition}\label{prop:reform}
+$\Avg(\A)\ge n/2$ if and only if $\Phi\le t(n-2)+n$.
+\end{proposition}
+
+\begin{proof}
+$\Avg(\A)\ge n/2$ is equivalent to $\sum_{A\in\A}(n-2|A|)\le0$. Splitting the sum
+over $\{[n]\}$, $\Yy$ and $\Cc$ gives
+\[
+  \sum_{A\in\A}\wt(A)
+  =(n-2n)+t\bigl(n-2(n-1)\bigr)+\Phi
+  =\Phi-n-t(n-2). \qedhere
+\]
+\end{proof}
+
+We record the basic fact underlying everything, due to Bouchard
+\cite[Lem.~1.3]{Bouchard}; we include the short proof to keep the paper
+self-contained.
+
+\begin{lemma}\label{lem:coatom}
+Let $\A$ be separating and union-closed with $|\A|\ge2$. Then every maximal chain
+of $\A$ contains a member set of size $n-1$. In particular $t\ge1$.
+\end{lemma}
+
+\begin{proof}
+Let $[n]=K_1\supsetneq K_2\supsetneq\cdots$ be a maximal chain and suppose
+$|K_2|\le n-2$. Choose distinct $x,y\in K_2^c$. Since $\A$ is separating there
+is $A\in\A$ containing exactly one of them, say $x\in A$ and $y\notin A$. Then
+$K_2\subsetneq K_2\cup A$ because $x\notin K_2$, and $K_2\cup A\subsetneq[n]$
+because $y\notin K_2\cup A$. Inserting $K_2\cup A\in\A$ into the chain
+contradicts maximality.
+\end{proof}
+
+\section{Structure of the core}\label{sec:struct}
+
+Throughout this section $\A$ is separating, union-closed, and $h(\A)=4$. Let
+$\Mm$ denote the set of maximal members of $\Cc$ with respect to inclusion and
+$\Nn:=\Cc\setminus\Mm$.
+
+\begin{lemma}\label{lem:under}
+Every $A\in\Cc$ satisfies $A\subsetneq Y$ for some coatom $Y\in\Yy$. Equivalently,
+$T\setminus A\neq\emptyset$ for every $A\in\Cc$.
+\end{lemma}
+
+\begin{proof}
+Extend $\{A,[n]\}$ to a maximal chain. By Lemma~\ref{lem:coatom} that chain
+contains a set $Y$ with $|Y|=n-1$, and $Y\in\Yy$ by definition of $T$. Since
+$A\in\Cc$ we have $|A|\le n-2$, so $A$ and $Y$ are comparable with
+$A\subsetneq Y$. Writing $Y=[n]\setminus\{x\}$ with $x\in T$ gives
+$x\in T\setminus A$.
+\end{proof}
+
+\begin{lemma}\label{lem:nochain}
+$\Cc$ contains no chain of three sets. Consequently every member of $\Cc$ is
+either maximal or minimal in $\Cc$, and every $N\in\Nn$ satisfies
+$N\subsetneq M$ for some $M\in\Mm$.
+\end{lemma}
+
+\begin{proof}
+Suppose $A\subsetneq B\subsetneq C$ with $A,B,C\in\Cc$. By Lemma~\ref{lem:under}
+there is a coatom $Y$ with $C\subsetneq Y$. Then
+$A\subsetneq B\subsetneq C\subsetneq Y\subsetneq[n]$ is a chain of five member
+sets, contradicting $h(\A)=4$. A poset without three-element chains has all
+elements maximal or minimal.
+\end{proof}
+
+The next lemma is the pivot of the structural part.
+
+\begin{lemma}\label{lem:Zminus}
+Every $M\in\Mm$ satisfies $|Z\setminus M|\le1$. In particular $|M|\ge m-1$ and
+\[
+  \wt(M)\le n-2(m-1)=2t+2-n.
+\]
+\end{lemma}
+
+\begin{proof}
+Suppose $z_1,z_2\in Z\setminus M$ are distinct. Since $\A$ is separating, some
+$A\in\A$ contains exactly one of $z_1,z_2$. Now $A\neq[n]$, and $A$ is not a
+coatom either, because coatoms are of the form $[n]\setminus\{x\}$ with $x\in T$
+and therefore contain all of $Z$. Hence $A\in\Cc$.
+
+If $A\subseteq M$ then $z_1,z_2\notin A$, a contradiction. So
+$A\not\subseteq M$, whence $M\subsetneq M\cup A\in\A$. By maximality of $M$ in
+$\Cc$ we get $M\cup A\notin\Cc$, i.e.\ $M\cup A\in\Yy\cup\{[n]\}$. Every member
+of $\Yy\cup\{[n]\}$ contains $Z$, so $Z\setminus M\subseteq A$ and in particular
+$z_1,z_2\in A$ --- again a contradiction.
+\end{proof}
+
+\begin{lemma}\label{lem:pairM}
+For distinct $M,M'\in\Mm$ we have $M\cup M'\in\Yy\cup\{[n]\}$. Consequently
+$M^c\cap M'^c$ is contained in $T$ and has at most one element; in particular,
+distinct maximal core sets omit distinct elements of $Z$.
+\end{lemma}
+
+\begin{proof}
+$M\subsetneq M\cup M'\in\A$, so maximality gives
+$M\cup M'\in\Yy\cup\{[n]\}$, i.e.\ $|(M\cup M')^c|\le1$ and, if nonempty,
+$(M\cup M')^c\subseteq T$. Now $(M\cup M')^c=M^c\cap M'^c$.
+\end{proof}
+
+\begin{lemma}\label{lem:children}
+Let $M\in\Mm$ and let $\Nn_M:=\{N\in\Cc:N\subsetneq M\}$. Then:
+\begin{enumerate}
+\item[(i)] any two distinct $N,N'\in\Nn_M$ satisfy $N\cup N'=M$;
+\item[(ii)] the sets $M\setminus N$, $N\in\Nn_M$, are pairwise disjoint and
+nonempty, hence
+\[
+  \sum_{N\in\Nn_M}|M\setminus N|\le|M|
+  \qquad\text{and}\qquad
+  |\Nn_M|\le|M|.
+\]
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+(i) $N\cup N'\in\A$ and $N\cup N'\subseteq M$, so $N\cup N'\in\Cc$. If
+$N\cup N'=N$ then $N'\subsetneq N\subsetneq M$ is a three-chain in $\Cc$,
+contradicting Lemma~\ref{lem:nochain}; symmetrically $N\cup N'\neq N'$. If
+$N\cup N'\subsetneq M$ then $N\subsetneq N\cup N'\subsetneq M$ is again a
+three-chain. Hence $N\cup N'=M$.
+
+(ii) $N\cup N'=M$ is equivalent to
+$(M\setminus N)\cap(M\setminus N')=\emptyset$, and $M\setminus N\neq\emptyset$
+since $N\subsetneq M$.
+\end{proof}
+
+We can now state the inequality that drives the master argument.
+
+\begin{lemma}[Pair inequality]\label{lem:P}
+Any two distinct $A,A'\in\Cc$ satisfy
+\[
+  |A|+|A'|\ge m-1.
+\]
+\end{lemma}
+
+\begin{proof}
+If $A$ and $A'$ are comparable, say $A\subsetneq A'$, then $A'$ is not minimal
+in $\Cc$, hence maximal by Lemma~\ref{lem:nochain}, so $|A'|\ge m-1$ by
+Lemma~\ref{lem:Zminus} and the claim follows.
+
+If they are incomparable, then $A\subsetneq A\cup A'\in\A$. If
+$A\cup A'\in\Cc$, then $A\cup A'$ is not minimal, hence maximal, so
+$|A\cup A'|\ge m-1$ by Lemma~\ref{lem:Zminus}. If $A\cup A'\notin\Cc$, then
+$|A\cup A'|\ge n-1\ge m-1$. In both cases
+$|A|+|A'|\ge|A\cup A'|\ge m-1$.
+\end{proof}
+
+\begin{corollary}\label{cor:empty}
+At most one member of $\Cc$ has size smaller than $(m-1)/2$. Moreover, if
+$\emptyset\in\A$ then $\Cc=\{\emptyset\}\cup\Mm$, i.e.\ every nonempty core set
+is maximal.
+\end{corollary}
+
+\begin{proof}
+The first claim is immediate from Lemma~\ref{lem:P}. For the second, if
+$\emptyset\in\A$ then $\emptyset\in\Cc$, and
+$\emptyset\subsetneq N\subsetneq M$ would be a three-chain in $\Cc$ for any
+non-maximal nonempty $N$.
+\end{proof}
+
+\section{The master inequality}\label{sec:master}
+
+Lemma~\ref{lem:under} guarantees that $T\setminus A\neq\emptyset$ for every
+$A\in\Cc$, so the following fractional charge is well defined. For $x\in T$ put
+\begin{equation}\label{eq:charge}
+  \widetilde C_x
+  :=
+  \sum_{\substack{A\in\Cp\\ x\in T\setminus A}}
+  \frac{\wt(A)}{|T\setminus A|}.
+\end{equation}
+
+\begin{proposition}[Exact charge identity]\label{prop:identity}
+\[
+  \sum_{x\in T}\widetilde C_x=\Phi^+.
+\]
+\end{proposition}
+
+\begin{proof}
+Exchanging the order of summation, each $A\in\Cp$ contributes
+$\wt(A)\cdot|T\setminus A|/|T\setminus A|=\wt(A)$.
+\end{proof}
+
+\begin{remark}\label{rem:whycharge}
+The identity in Proposition~\ref{prop:identity} is exact, with no loss and no
+omitted sets. This is the reason for charging $A$ to the elements of
+$T\setminus A$ rather than to the elements of $A\cap T$: the latter convention
+assigns nothing at all to core sets disjoint from $T$ (for instance to
+$\emptyset$, and to every core set when $t=1$, by Lemma~\ref{lem:under}), and
+therefore cannot recover $\Phi^+$.
+\end{remark}
+
+\begin{theorem}[Master inequality]\label{thm:master}
+If $q\ge2$ then
+\[
+  \Phi^+\le q(t+1).
+\]
+\end{theorem}
+
+\begin{proof}
+Write $\Cp=\{A_1,\dots,A_q\}$ and $a_i:=|A_i|$. Summing Lemma~\ref{lem:P} over
+all $\binom q2$ pairs gives
+\[
+  (q-1)\sum_{i=1}^q a_i
+  =
+  \sum_{i<j}(a_i+a_j)
+  \ge
+  \binom q2(m-1),
+\]
+so
+\[
+  \sum_{i=1}^q a_i\ge\frac{q(m-1)}2.
+\]
+Hence
+\[
+  \Phi^+
+  =qn-2\sum_i a_i
+  \le qn-q(m-1)
+  =q(n-m+1)
+  =q(t+1). \qedhere
+\]
+\end{proof}
+
+\begin{theorem}\label{thm:B}
+If $(t+1)q\le t(n-2)+n$, then $\Avg(\A)\ge n/2$.
+\end{theorem}
+
+\begin{proof}
+If $q=0$ then $\Phi\le0\le t(n-2)+n$. If $q=1$ then
+$\Phi\le\Phi^+\le n\le t(n-2)+n$ because $t\ge1$ and $n\ge4$ give
+$t(n-2)\ge0$. If $q\ge2$ then $\Phi\le\Phi^+\le q(t+1)\le t(n-2)+n$ by
+Theorem~\ref{thm:master}. In all cases Proposition~\ref{prop:reform} applies.
+\end{proof}
+
+\begin{corollary}\label{cor:count}
+$\Avg(\A)\ge n/2$ holds whenever $q\le n-2$, and also whenever $t=1$ and
+$q\le n-1$.
+\end{corollary}
+
+\begin{proof}
+The hypothesis of Theorem~\ref{thm:B} reads $q\le n-\frac{2t}{t+1}$, and
+$1\le\frac{2t}{t+1}<2$ for $t\ge1$, with value $1$ exactly when $t=1$.
+\end{proof}
+
+\begin{example}\label{ex:sharp}
+Let $n=4$ and $\A=(2^{[3]}\setminus\{\emptyset\})\cup\{[4]\}$. Then $\A$ is
+union-closed and separating, its longest chain
+$\{1\}\subsetneq\{1,2\}\subsetneq\{1,2,3\}\subsetneq[4]$ has four sets, and
+$\Avg(\A)=16/8=2=n/2$. Here $T=\{4\}$, $t=1$, $m=3$,
+$\Cp=\{\{1\},\{2\},\{3\}\}$, $q=3$, and
+\[
+  \Phi=\Phi^+=6=q(t+1)=t(n-2)+n.
+\]
+Thus Theorem~\ref{thm:master}, Theorem~\ref{thm:B} and
+Proposition~\ref{prop:reform} are simultaneously tight, and
+$\widetilde C_4=6=(n-2)+n/t$. This family has $|\B|=3$, so it lies in the range
+left open in~\cite{Bouchard}; Theorem~\ref{thm:B} settles it.
+\end{example}
+
+\section{The large-\texorpdfstring{$n$}{n} regime}\label{sec:large}
+
+\begin{lemma}\label{lem:kbound}
+Assume $n\ge4t+4$. Then:
+\begin{enumerate}
+\item[(i)] $\Mm\cap\Cp=\emptyset$; in particular every $A\in\Cp$ is properly
+contained in some $M\in\Mm$;
+\item[(ii)] for every $M\in\Mm$, at most two members of $\Cp$ are proper subsets
+of $M$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+From $n\ge4t+4$ we get $t\le(n-4)/4$ and therefore, by Lemma~\ref{lem:Zminus},
+\begin{equation}\label{eq:Mbig}
+  |M|\ge m-1=n-t-1\ge n-\frac{n-4}{4}-1=\frac{3n}{4}
+  \qquad\text{for every }M\in\Mm.
+\end{equation}
+In particular $|M|\ge3n/4>n/2$, so $\wt(M)<0$ and $M\notin\Cp$; combined with
+Lemma~\ref{lem:nochain} this proves~(i).
+
+For~(ii), fix $M\in\Mm$ and let $N_1,\dots,N_k$ be the members of $\Cp$ with
+$N_i\subsetneq M$. Each satisfies $|N_i|<n/2$, hence
+$|M\setminus N_i|>|M|-n/2$. By Lemma~\ref{lem:children}(ii) the sets
+$M\setminus N_i$ are pairwise disjoint subsets of $M$, so
+\[
+  k\Bigl(|M|-\frac n2\Bigr)
+  <
+  \sum_{i=1}^k|M\setminus N_i|
+  \le |M|,
+\]
+i.e.
+\[
+  k<\frac{|M|}{|M|-n/2}.
+\]
+The function $x\mapsto x/(x-n/2)$ is decreasing for $x>n/2$, so by~\eqref{eq:Mbig}
+the right-hand side is at most
+\[
+  \frac{3n/4}{3n/4-n/2}=3.
+\]
+Hence $k\le2$.
+\end{proof}
+
+\begin{theorem}\label{thm:A}
+If $n\ge4t+4$, then $\Avg(\A)\ge n/2$. More precisely $\Phi\le0$ unless $q=1$,
+in which case $\Phi\le2t+2$.
+\end{theorem}
+
+\begin{proof}
+If $q=0$ then every term of $\Phi$ is nonpositive and $\Phi\le0$.
+
+Assume $q\ge1$. By Lemma~\ref{lem:kbound}(i) we may choose, for each
+$A\in\Cp$, a maximal core set $p(A)\in\Mm$ with $A\subsetneq p(A)$. Let
+$P:=p(\Cp)\subseteq\Mm$ be the set of chosen parents. By
+Lemma~\ref{lem:kbound}(ii) each $M\in P$ is the parent of at most two members of
+$\Cp$, so $|P|\ge q/2$. The sets in $P$ are pairwise distinct members of $\Cc$
+and, by Lemma~\ref{lem:kbound}(i), none of them lies in $\Cp$; hence
+\begin{equation}\label{eq:split}
+  \Phi
+  \le
+  \sum_{A\in\Cp}\wt(A)+\sum_{M\in P}\wt(M)
+  =
+  \Phi^++\sum_{M\in P}\wt(M),
+\end{equation}
+because all remaining terms of $\Phi$ are nonpositive. By Lemma~\ref{lem:Zminus}
+we have $\wt(M)\le2t+2-n<0$ for every $M\in P$, so
+\[
+  \sum_{M\in P}\wt(M)\le |P|(2t+2-n)\le\frac q2(2t+2-n).
+\]
+
+If $q=1$, then $|P|=1$ and~\eqref{eq:split} gives
+$\Phi\le n+(2t+2-n)=2t+2$. Since $n\ge4$ and $t\ge1$ we have
+$t(n-2)+n-(2t+2)=t(n-4)+n-2>0$, so $\Phi\le t(n-2)+n$.
+
+If $q\ge2$, then Theorem~\ref{thm:master} applies and~\eqref{eq:split} gives
+\[
+  \Phi
+  \le
+  q(t+1)+\frac q2(2t+2-n)
+  =
+  q\Bigl(2t+2-\frac n2\Bigr)
+  \le0,
+\]
+the last step because $n\ge4t+4$. In all cases $\Phi\le t(n-2)+n$, and
+Proposition~\ref{prop:reform} applies.
+\end{proof}
+
+\begin{remark}
+The proof of Theorem~\ref{thm:A} shows more: for $n\ge4t+4$ the core weight is
+already nonpositive, so the coatoms are not needed at all. The threshold is of
+the correct shape: the bound $k\le2$ of Lemma~\ref{lem:kbound}(ii) degrades as
+$n/t$ decreases, which is precisely the mechanism that makes small $n/t$ the hard
+regime.
+\end{remark}
+
+\section{Small ground sets and the residual inequality}\label{sec:conj}
+
+By Theorem~\ref{thm:A} we may assume $n\le4t+3$. We first record the exhaustive
+verification for small ground sets, then state the residual inequality that is
+proved in Sections~\ref{sec:closing}--\ref{sec:main}.
+
+\subsection*{Small ground sets}
+
+The residual inequality can be settled for small $n$ by exhaustive computation.
+We carried out two independent computations, described below; both are available
+in the repository cited at the end of this section.
+
+\emph{Computation I (full enumeration).} For a fixed $n$ and a canonical
+$t$-subset $T\subseteq[n]$ we enumerate every union-closed family $\A$ whose
+coatom index set is $T$, pruning only with the definitional constraints (core
+sets of size at most $n-2$, union-closedness, no chain of five member sets), so
+that the lemmas of Section~\ref{sec:struct} are tested and not presupposed.
+Since every quantity involved is invariant under permutations of $[n]$, fixing
+$T$ loses nothing. Each family found is checked against
+Lemmas~\ref{lem:under}--\ref{lem:P}, Proposition~\ref{prop:identity},
+Theorems~\ref{thm:master} and~\ref{thm:A}, the residual inequality
+$\Phi^+\le t(n-2)+n$, and the conclusion $\Avg(\A)\ge n/2$. The enumeration is
+complete for $n\le5$ and for $n=6$ with $t\le5$; in the labelling of $[n]$ this
+covers
+\[
+  2{,}034\ (n=4),\qquad
+  346{,}028\ (n=5),\qquad
+  106{,}040{,}636\ (n=6,\ t\le5)
+\]
+families, with no violation of any statement. For $n=4$ the count $2{,}034$ was
+reproduced by an independent brute-force scan of all $2^{16}$ subfamilies of
+$2^{[4]}$. The number of families grows too fast for this method to reach
+$n\ge7$.
+
+\emph{Computation II (small parts).} Since $\Phi^+$ depends only on the member
+sets of size less than $n/2$, one may enumerate the possible small parts $\Cp$
+instead of the families themselves. Every family's small part occurs among the
+enumerated states, so an upper bound proved this way holds for all families.
+A state is discarded only when it is impossible: because the union-closure of
+the selected sets would contain a set of size $n-1$ that is not a coatom;
+because it would contain a chain of three core sets; because a core set would
+contain $T$ (Lemma~\ref{lem:under}); because a set of the closure of size below
+$n/2$ was not itself selected; because a closure set properly containing another
+one would omit two points of $Z$ (Lemma~\ref{lem:Zminus}); or because two core
+sets would violate Lemma~\ref{lem:P}. A branch-and-bound cut discards a subtree
+once the accumulated $\Phi^+$ plus all remaining positive weight cannot exceed
+$t(n-2)+n$. Adding the pair-structure cuts of Section~\ref{sec:closing} as
+further necessary conditions also verifies the cases $n=11$ with $t\le3$.
+
+This gives the following.
+
+\begin{theorem}\label{thm:small}
+The inequality
+\[
+  \Phi^+\le t(n-2)+n
+\]
+holds for every $n\le10$ and every $t$, and also for $n=11$ with $t\le3$.
+Consequently $\Avg(\A)\ge n/2$ for every separating union-closed family of
+height four whose ground set has at most ten elements, and also for the cases
+$n=11$, $t\le3$.
+\end{theorem}
+
+Table~\ref{tab:maxphi} lists the exact maximum of $\Phi^+$ over all admissible
+small parts for small $n$, computed with the branch-and-bound cut disabled. On
+the fourteen pairs $(n,t)$ for which Computation~I is also complete, the two
+computations agree on the maximum in every case, which is a strong consistency
+check on the constraint set used in Computation~II.
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{rrrrrrrrrr}
+\toprule
+& \multicolumn{9}{c}{$t$}\\
+\cmidrule(l){2-10}
+$n$ & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & bound at $t=1$\\
+\midrule
+4 & \textbf{6} & 6 & 6 & 8 & --- & --- & --- & --- & 6\\
+5 & 6 & 8 & 8 & 9 & 10 & --- & --- & --- & 8\\
+6 & 6 & 8 & 10 & 10 & 10 & 12 & --- & --- & 10\\
+7 & 7 & 7 & 11 & 13 & 13 & 13 & 14 & --- & 12\\
+8 & 8 & 8 & 10 & 14 & 16 & 16 & 16 & 16 & 14\\
+\bottomrule
+\end{tabular}
+\caption{Exact maximum of $\Phi^+$ over all admissible small parts. The bound
+$t(n-2)+n$ is smallest at $t=1$; the only case in which it is attained is
+$(n,t)=(4,1)$, realised by Example~\ref{ex:sharp}.}
+\label{tab:maxphi}
+\end{table}
+
+For $9\le n\le10$ the branch-and-bound run visits between $8\cdot10^6$ and
+$4\cdot10^7$ states per value of $t$ and verifies the inequality in every case;
+the largest value of $\Phi^+$ encountered there is $22$, against a bound that
+ranges from $18$ to $90$. Away from $n=4$ the inequality is therefore very far
+from tight.
+
+The code for both computations is available at
+\url{https://github.com/YSKpython/frankl-height4-avg-bound}.
+
+\subsection*{The residual inequality}
+
+The residual statement, formerly Conjecture~6.1 in earlier drafts, is the
+following.
+
+\begin{theorem}[Residual inequality]\label{thm:residual}
+Let $\A\subseteq2^{[n]}$ be separating and union-closed with $h(\A)=4\le n$. Then
+\[
+  \Phi^+
+  =
+  \sum_{\substack{A\in\A\\2|A|<n}}(n-2|A|)
+  \le
+  t(n-2)+n.
+\]
+\end{theorem}
+
+The proof is given in Sections~\ref{sec:closing} and~\ref{sec:main}: the finite
+verification above handles small $n$, Theorem~\ref{thm:A} handles
+$n\ge4t+4$, and Section~\ref{sec:closing} closes the remaining window
+$n\le4t+3$.
+
+\section{The pair structure of \texorpdfstring{$\Cc^+$}{C+} and the closing argument}
+\label{sec:closing}
+
+Throughout this section $\A$ is separating and union-closed with
+$h(\A)=4\le n$. We keep the notation of Sections~\ref{sec:prelim}--\ref{sec:struct}
+and add the following. Put
+\[
+  \nu:=\Bigl\lceil\frac n2\Bigr\rceil-1,
+  \qquad
+  S_A:=[n]\setminus A,
+  \qquad
+  \lambda_M:=n-|M|=|S_M|.
+\]
+Thus $A\in\Cp$ if and only if $A\in\Cc$ and $|A|\le\nu$, and
+$|S_A|\ge n-\nu=\lfloor n/2\rfloor+1$ for every $A\in\Cp$. For $M\in\Mm$ set
+\[
+  V_M:=\{A\in\Cp:A\subseteq M\},
+  \qquad
+  k_M:=|V_M|.
+\]
+Since $M\in\Cc$ we have $|M|\le n-2$, i.e.\ $\lambda_M\ge2$, and by
+Lemma~\ref{lem:Zminus} we have $|M|\ge m-1$, i.e.\ $\lambda_M\le t+1$.
+
+The whole of this section rests on one observation: two member sets of size
+below $n/2$ are too large for their union to escape the core. In particular the
+argument does not degenerate when $Z$ is small, which is exactly where the
+earlier counting arguments lose their grip.
+
+\subsection*{The pair lemma}
+
+\begin{lemma}[Pair lemma]\label{lem:pair}
+Let $A\ne A'$ be members of $\Cp$. Then exactly one of the following holds.
+\begin{enumerate}
+\item[\rm(i)] $A\cup A'\in\Mm$ \hfill \emph{(the pair is internal)};
+\item[\rm(ii)] $n$ is odd, $|A|=|A'|=\frac{n-1}{2}$,
+$A\cap A'=\emptyset$, and $A\cup A'\in\Yy$ \hfill \emph{(the pair is external)}.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+Since $|A|,|A'|\le\nu$ we have
+$|S_A|,|S_{A'}|\ge n-\nu$, whence
+\begin{equation}\label{eq:pair}
+  |S_A\cap S_{A'}|
+  =
+  |S_A|+|S_{A'}|-|S_A\cup S_{A'}|
+  \ge
+  2(n-\nu)-n
+  =
+  \begin{cases}
+    2,& n\text{ even},\\
+    1,& n\text{ odd}.
+  \end{cases}
+\end{equation}
+As $|A\cup A'|=n-|S_A\cap S_{A'}|$, two cases arise.
+
+If $|S_A\cap S_{A'}|\ge2$, then $|A\cup A'|\le n-2$, so $A\cup A'$ is neither
+$[n]$ nor a coatom, i.e.\ $A\cup A'\in\Cc$. Moreover $A\cup A'$ is not minimal
+in $\Cc$: if $A$ and $A'$ are incomparable then
+$A\subsetneq A\cup A'$, and if say $A\subsetneq A'$ then
+$A\cup A'=A'\supsetneq A$ with $A\in\Cc$. By Lemma~\ref{lem:nochain} a
+non-minimal member of $\Cc$ is maximal, so $A\cup A'\in\Mm$, which is~(i).
+
+Otherwise $|S_A\cap S_{A'}|=1$; by~\eqref{eq:pair} this forces $n$ odd and
+equality throughout, i.e.\ $|S_A|=|S_{A'}|=\frac{n+1}{2}$ and
+$S_A\cup S_{A'}=[n]$. Thus $|A|=|A'|=\frac{n-1}{2}$ and
+$|A\cup A'|=n-1$. A set of size $n-1$ belonging to $\A$ is either a coatom or
+would be a core set containing all of $T$; the latter is impossible by
+Lemma~\ref{lem:under}. Hence $A\cup A'\in\Yy$. Finally
+$|A|+|A'|=n-1=|A\cup A'|$ gives $A\cap A'=\emptyset$. This is~(ii).
+\end{proof}
+
+\begin{lemma}[Lines]\label{lem:lines}
+Let $M\in\Mm$ and let $A\ne A'$ be members of $V_M$. Then $A\cup A'=M$.
+Consequently $|V_M\cap V_{M'}|\le1$ for distinct $M,M'\in\Mm$, and every
+internal pair is contained in $V_M$ for exactly one $M\in\Mm$, namely
+$M=A\cup A'$.
+\end{lemma}
+
+\begin{proof}
+$A\cup A'\subseteq M$ gives $|A\cup A'|\le|M|\le n-2$, so by
+Lemma~\ref{lem:pair} the pair is internal and $A\cup A'\in\Mm$. Being contained
+in the maximal set $M$, it equals $M$. If $A\ne A'$ both lay in
+$V_M\cap V_{M'}$, we would get $M=A\cup A'=M'$.
+\end{proof}
+
+We call the sets $M\in\Mm$ with $k_M\ge2$ the \emph{lines}. By
+Lemma~\ref{lem:lines} two distinct lines meet in at most one point of $\Cp$;
+for $n$ even, Lemma~\ref{lem:pair} says moreover that every pair of points lies
+on exactly one line, so that $(\Cp,\{V_M\})$ is a linear space.
+
+\subsection*{Capacity of a line}
+
+\begin{lemma}[Capacity]\label{lem:cap}
+Let $M\in\Mm$. If $n$ is even then $k_M\le\lambda_M$. If $n$ is odd then
+$k_M\le\lambda_M$, except when $\lambda_M=\frac{n-1}{2}$, in which case
+$k_M\le\lambda_M+1$.
+\end{lemma}
+
+\begin{proof}
+Write $\mu:=|M|=n-\lambda$ and, for $A\in V_M$ with $A\ne M$, let
+$p_A:=\mu-|A|\ge1$ be its \emph{petal}. By Lemma~\ref{lem:children}(ii) the
+petals of the members of $V_M\setminus\{M\}$ are pairwise disjoint nonempty
+subsets of $M$, so their number is at most $\mu$ and $\sum p_A\le\mu$.
+
+\emph{Case $\mu\le\nu$.} Then $M\in\Cp$, so $k_M\le\mu+1=n-\lambda+1$. Also
+$\mu\le\nu$ gives $\lambda\ge n-\nu=\lfloor n/2\rfloor+1$, whence
+$k_M\le n-\lambda+1\le\lceil n/2\rceil\le\lambda$ (for $n$ even the last chain
+even gives $k_M\le n/2<\lambda$).
+
+\emph{Case $\mu>\nu$.} Then $M\notin\Cp$, every $A\in V_M$ is a proper subset
+of $M$ with $p_A\ge\mu-\nu\ge1$, and disjointness of the petals gives
+$k_M(\mu-\nu)\le\mu$, i.e.
+\begin{equation}\label{eq:cap}
+  k_M\le\frac{n-\lambda}{n-\lambda-\nu}.
+\end{equation}
+
+Assume first $n$ even, so $\nu=n/2-1$ and $\mu\ge n/2$, i.e.\
+$2\le\lambda\le n/2$. The bound~\eqref{eq:cap} is at most $\lambda$ if and only
+if
+\[
+  n-\lambda\le\lambda(n-\lambda-\nu),
+\]
+i.e.
+\[
+  \lambda^2-\lambda\Bigl(2+\frac n2\Bigr)+n\le0,
+\]
+which is
+\[
+  (\lambda-2)\Bigl(\lambda-\frac n2\Bigr)\le0.
+\]
+This holds precisely on $2\le\lambda\le n/2$.
+
+Now let $n$ be odd, so $\nu=(n-1)/2$ and $\mu\ge(n+1)/2$, i.e.\
+$2\le\lambda\le(n-1)/2$. Put
+\[
+  u:=\mu-\nu=\frac{n+1}{2}-\lambda\ge1.
+\]
+Then~\eqref{eq:cap} reads
+\[
+  k_M\le\frac{\mu}{u}=1+\frac{(n-1)/2}{u}.
+\]
+If $u=1$, i.e.\ $\lambda=(n-1)/2$, this is
+$k_M\le(n+1)/2=\lambda+1$. If $u\ge2$, it suffices, $k_M$ being an integer, to
+show
+\[
+  1+\frac{n-1}{2u}<\lambda+1=\frac{n+3}{2}-u,
+\]
+i.e.
+\[
+  Q(u):=2u^2-u(n+1)+(n-1)<0.
+\]
+Here $2\le u\le(n-3)/2$, and $Q$ is convex with
+$Q(2)=5-n<0$ and $Q((n-3)/2)=5-n<0$ for $n\ge6$; hence $Q<0$ on the whole
+interval, and $k_M\le\lambda$.
+\end{proof}
+
+\subsection*{A global bound on \texorpdfstring{$q$}{q}}
+
+\begin{lemma}[Fisher-type count]\label{lem:fisher}
+\[
+  \sum_{M\in\Mm}\binom{\lambda_M}{2}
+  \le
+  \binom n2-\binom m2
+  =
+  \binom t2+tm.
+\]
+\end{lemma}
+
+\begin{proof}
+By Lemma~\ref{lem:pairM} a pair $\{x,y\}\subseteq[n]$ is contained in $S_M$ for
+at most one $M\in\Mm$, and by Lemma~\ref{lem:Zminus} no $S_M$ contains two
+elements of $Z$, so no pair inside $Z$ is counted.
+\end{proof}
+
+\begin{lemma}[Global bound]\label{lem:q}
+Let
+\[
+  f:=|\{M\in\Mm:\lambda_M=(n-1)/2\}|
+\]
+when $n$ is odd, and $f:=0$ when $n$ is even. Then
+\[
+  f\le\Bigl\lfloor\frac{4n}{n-3}\Bigr\rfloor,
+\]
+and $f=0$ unless $t\ge(n-3)/2$. Moreover
+\[
+  q(q-1)\le t(t-1)+2tm
+  \qquad(n\text{ even}),
+\]
+and
+\[
+  q^2-2q\le t(t-1)+2tm+\frac32 f(n-1)
+  \qquad(n\text{ odd}).
+\]
+\end{lemma}
+
+\begin{proof}
+For $f$: such sets $S_M$ have $(n-1)/2\ge2$ elements and pairwise meet in at
+most one point, so
+\[
+  f\binom{(n-1)/2}{2}\le\binom n2
+\]
+by Lemma~\ref{lem:fisher}, which gives $f\le4n/(n-3)$; and
+$\lambda_M\le t+1$ forces $(n-1)/2\le t+1$.
+
+For $n$ even, every pair of distinct members of $\Cp$ is internal
+(Lemma~\ref{lem:pair}) and lies on exactly one line (Lemma~\ref{lem:lines}), so
+with Lemmas~\ref{lem:cap} and~\ref{lem:fisher}
+\[
+  \binom q2
+  =
+  \sum_{M\in\Mm}\binom{k_M}{2}
+  \le
+  \sum_{M\in\Mm}\binom{\lambda_M}{2}
+  \le
+  \binom t2+tm.
+\]
+
+For $n$ odd, let $X$ be the number of external pairs. By Lemma~\ref{lem:cap},
+\[
+  \sum_M\binom{k_M}{2}
+  \le
+  \sum_M\binom{\lambda_M}{2}+f\cdot\frac{n-1}{2},
+\]
+because $\binom{\lambda+1}{2}-\binom{\lambda}{2}=\lambda$.
+
+For $X$, suppose $A\in\Cp$ has two external partners. By Lemma~\ref{lem:pair}
+they are $S_A\setminus\{x\}$ and $S_A\setminus\{y\}$ for distinct $x,y$, and
+their union is $S_A$, of size $(n+1)/2\le n-2$ for $n\ge5$. By
+Lemma~\ref{lem:pair} again $S_A\in\Mm$, with $\lambda_{S_A}=(n-1)/2$. Distinct
+such $A$ give distinct sets $S_A$, so at most $f$ members of $\Cp$ have external
+degree at least $2$, and each external degree is at most
+$k_{S_A}\le(n+1)/2$ by Lemma~\ref{lem:cap}. Hence
+\[
+  X\le\frac12\Bigl(q+f\frac{n-1}{2}\Bigr).
+\]
+Therefore
+\[
+  \binom q2
+  =
+  \sum_M\binom{k_M}{2}+X
+  \le
+  \binom t2+tm+f\frac{n-1}{2}+\frac q2+\frac{f(n-1)}4.
+\]
+Multiplying by $2$ and subtracting $q$ gives the stated odd bound.
+\end{proof}
+
+We write $Q(n,t)$ for the largest integer $q$ satisfying the relevant inequality
+of Lemma~\ref{lem:q}; thus $q\le Q(n,t)$ always, and $Q(n,t)\le n$ for $n$ even.
+
+\subsection*{The local bound}
+
+\begin{lemma}[Local bound]\label{lem:local}
+Assume $q\ge2$ and let $A_0\in\Cp$ be of maximum size. Put
+\[
+  a_0:=|A_0|,\qquad
+  w_0:=n-2a_0,\qquad
+  \sigma:=n-a_0,\qquad
+  z_0:=|S_{A_0}\cap Z|.
+\]
+Thus $1\le w_0\le t+1$ and $z_0\ge m-a_0$. Let $\varepsilon$ be the number of
+external partners of $A_0$. Then $\varepsilon=0$ unless $n$ is odd and
+$w_0=1$, in which case $\varepsilon\le1$ if $f=0$ and
+$\varepsilon\le(n+1)/2$ otherwise. Moreover:
+
+\begin{enumerate}
+\item[\rm(A)] If $A_0\in\Mm$ --- which forces $w_0\le2t+2-n$ --- then
+\[
+  \Phi^+\le w_0+\varepsilon+a_0(w_0+2).
+\]
+
+\item[\rm(B)] If $A_0\notin\Mm$, let $\mathcal L$ be the set of $M\in\Mm$ of the
+form $M=A\cup A_0$ with $A\in\Cp\setminus\{A_0\}$, and let
+$r:=|\mathcal L|$, so that $r+\varepsilon\le q-1$. Then every
+$M\in\mathcal L$ satisfies $2\lambda_M\le n$ and $\lambda_M\le t+1$,
+\[
+  \sum_{M\in\mathcal L}\lambda_M(\lambda_M-1)
+  \le
+  \sigma(\sigma-1)-z_0(z_0-1)=:B,
+\]
+and
+\[
+  \Phi^+
+  \le
+  w_0+\varepsilon+\sum_{M\in\mathcal L}(2\lambda_M-w_0).
+\]
+Consequently
+\[
+  \Phi^+
+  \le
+  w_0+\varepsilon+
+  \max_{0\le r\le q-1-\varepsilon}
+  \Bigl[
+    2\min\Bigl(
+      \frac{r+\sqrt{r^2+4rB}}2,
+      (t+1)r
+    \Bigr)
+    -rw_0
+  \Bigr],
+\]
+the bracket being $0$ at $r=0$ (the case $\mathcal L=\varnothing$).
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+The bound $w_0\le t+1$ follows by picking $A\in\Cp$, $A\ne A_0$: by
+Lemma~\ref{lem:P},
+\[
+  2a_0\ge |A_0|+|A|\ge m-1,
+\]
+so $w_0=n-2a_0\le n-m+1=t+1$. The statement about $\varepsilon$ is contained in
+the proof of Lemma~\ref{lem:q}: an external pair forces
+$|A_0|=(n-1)/2$, i.e.\ $w_0=1$, and two external partners force
+$S_{A_0}\in\Mm$ with $\lambda_{S_{A_0}}=(n-1)/2$, hence $f\ge1$; in that case
+$\varepsilon\le k_{S_{A_0}}\le(n+1)/2$.
+
+By Lemma~\ref{lem:pair} every $A\in\Cp\setminus\{A_0\}$ is either an external
+partner of $A_0$ (and then $\wt(A)=1$) or satisfies $A\cup A_0\in\Mm$; in the
+latter case $A\in V_M$ for $M=A\cup A_0$, and by Lemma~\ref{lem:lines} this $M$
+is the unique line through $A_0$ containing $A$. Hence
+\begin{equation}\label{eq:split-local}
+  \Phi^+
+  =
+  w_0+\varepsilon+
+  \sum_M\sum_{A\in V_M\setminus\{A_0\}}\wt(A),
+\end{equation}
+the outer sum being over the maximal core sets containing $A_0$ that carry a
+further point.
+
+Fix such an $M$ and write $\mu=|M|$. For $A\in V_M$ we have
+\[
+  \wt(A)=n-2|A|=n-2\mu+2p_A=2\lambda_M-n+2p_A,
+\]
+and since the petals are pairwise disjoint with $p_{A_0}=\mu-a_0$,
+\begin{equation}\label{eq:petal}
+  \sum_{A\in V_M\setminus\{A_0\}}p_A
+  \le
+  \mu-p_{A_0}
+  =
+  a_0.
+\end{equation}
+
+(A) Let $A_0\in\Mm$. Since $\Mm$ is an antichain, no $M\in\Mm$ properly contains
+$A_0$, so the only maximal core set containing $A_0$ is $A_0$ itself: every
+non-external $A\ne A_0$ satisfies $A\cup A_0=A_0$, i.e.\ $A\subsetneq A_0$.
+Their number is at most $a_0$ by Lemma~\ref{lem:children}(ii), so by
+\eqref{eq:split-local}, \eqref{eq:petal} and $2\lambda_{A_0}-n=w_0$,
+\[
+  \Phi^+\le w_0+\varepsilon+a_0w_0+2a_0.
+\]
+Finally $A_0\in\Mm$ gives $a_0\ge m-1$ by Lemma~\ref{lem:Zminus}, i.e.\
+$w_0\le2t+2-n$.
+
+(B) Let $A_0\notin\Mm$ and $M\in\mathcal L$. Then $A_0\subsetneq M$, and
+$M\notin\Cp$: otherwise $M$ would be a member of $\Cp$ of size $>a_0$. Hence
+$2\mu\ge n$, i.e.\ $2\lambda_M\le n$, and $k_M-1\ge1$, so by~\eqref{eq:petal}
+\[
+  \sum_{A\in V_M\setminus\{A_0\}}\wt(A)
+  =
+  (k_M-1)(2\lambda_M-n)+2\sum_{A\in V_M\setminus\{A_0\}}p_A
+  \le
+  (2\lambda_M-n)+2a_0
+  =
+  2\lambda_M-w_0.
+\]
+The sets $S_M$, $M\in\mathcal L$, are subsets of $S_{A_0}$ which pairwise meet
+in at most one point (Lemma~\ref{lem:pairM}) and none of which contains two
+points of $Z$ (Lemma~\ref{lem:Zminus}); double counting the pairs inside
+$S_{A_0}$ gives
+\[
+  \sum_{M\in\mathcal L}\binom{\lambda_M}{2}
+  \le
+  \binom{\sigma}{2}-\binom{z_0}{2}.
+\]
+Distinct lines through $A_0$ carry disjoint sets of further points, and the
+$\varepsilon$ external partners of $A_0$ lie on none of them, so
+$r+\varepsilon\le q-1$. For fixed $r$, maximising $\sum\lambda_M$ subject to
+$\sum\lambda_M(\lambda_M-1)\le B$ gives, by Cauchy--Schwarz,
+\[
+  \sum\lambda_M
+  \le
+  \frac12\bigl(r+\sqrt{r^2+4rB}\bigr),
+\]
+while $\lambda_M\le t+1$ gives $\sum\lambda_M\le(t+1)r$. Substituting into
+\eqref{eq:split-local} yields the last display.
+\end{proof}
+
+\subsection*{Closing the window}
+
+\begin{definition}\label{def:psi}
+For integers $n\ge4$ and $1\le t\le n$ put $m=n-t$ and let
+$R:=Q(n,t)-1$. For each integer $w_0$ with $1\le w_0\le t+1$ and
+$w_0\equiv n\pmod2$, set
+\[
+  a_0=\frac{n-w_0}{2},\qquad
+  \sigma=\frac{n+w_0}{2},\qquad
+  z_0=\max(0,m-a_0),
+\]
+\[
+  B=\sigma(\sigma-1)-z_0(z_0-1),
+\]
+and
+\[
+  \varepsilon(w_0)=
+  \begin{cases}
+    0,& n\text{ even or }w_0\ge2,\\
+    1,& n\text{ odd},\ w_0=1,\ f_{\max}(n,t)=0,\\
+    \frac{n+1}{2},&\text{otherwise},
+  \end{cases}
+\]
+where
+\[
+  f_{\max}(n,t)=
+  \begin{cases}
+    \left\lfloor\frac{4n}{n-3}\right\rfloor,
+      & n\text{ odd and }t+1\ge\frac{n-1}{2},\\
+    0,&\text{otherwise}.
+  \end{cases}
+\]
+Define
+\[
+  \Psi_A(w_0)=
+  \begin{cases}
+    w_0+\varepsilon(w_0)+a_0(w_0+2),
+      & w_0\le2t+2-n,\\
+    -\infty,&\text{otherwise},
+  \end{cases}
+\]
+and
+\[
+  \Psi_B(w_0)=
+  w_0+\varepsilon(w_0)+
+  \max_{0\le r\le\max(0,R-\varepsilon(w_0))}
+  \Bigl[
+    2\min\Bigl(
+      \frac{r+\sqrt{r^2+4rB}}2,
+      (t+1)r
+    \Bigr)
+    -rw_0
+  \Bigr],
+\]
+the bracket being $0$ at $r=0$. Finally put
+\[
+  \Psi(n,t):=\max_{w_0}\max\{\Psi_A(w_0),\Psi_B(w_0)\}.
+\]
+\end{definition}
+
+\begin{remark}\label{rem:r0}
+The value $r=0$ has to be admitted in $\Psi_B$, because $\mathcal L$ may be
+empty; it never dominates. Indeed, if $r=0$ then every member of
+$\Cp\setminus\{A_0\}$ is an external partner of $A_0$, so $q\ge2$ forces
+$\varepsilon\ge1$, hence $n$ is odd and $w_0=1$ by Lemma~\ref{lem:local}. In
+that case $R\ge q-1\ge\varepsilon+0$, so $r=1$ is admissible whenever
+$R-\varepsilon\ge1$, and the bracket at $r=1$ equals
+\[
+  2\min\Bigl(\frac{1+\sqrt{1+4B}}2,\,t+1\Bigr)-1\ \ge\ 2\cdot 1-1\ =\ 1\ >\ 0,
+\]
+since $B\ge0$ and $t\ge1$. Thus admitting $r=0$ changes $\Psi$ only in the
+degenerate case $R=\varepsilon$, where it is needed.
+\end{remark}
+
+\begin{proposition}\label{prop:psi}
+For every separating union-closed family of height four on $[n]$,
+\[
+  \Phi^+\le\max\{n,\Psi(n,t)\}.
+\]
+\end{proposition}
+
+\begin{proof}
+If $q\le1$ then $\Phi^+\le n$. If $q\ge2$, apply Lemma~\ref{lem:local} and
+$q\le Q(n,t)$ from Lemma~\ref{lem:q}.
+\end{proof}
+
+\begin{theorem}\label{thm:window}
+For every pair $(n,t)$ with $n\ge11$, $t\ge3$ and $n\le4t+3$,
+\[
+  \Psi(n,t)<t(n-2)+n.
+\]
+\end{theorem}
+
+\begin{proof}
+For $11\le n\le200$ this is a finite evaluation of Definition~\ref{def:psi}; it
+is carried out by the script \texttt{verify\_h4.py} in the repository, using
+exact integer upper bounds for the square-root term (so that the verification
+involves no floating-point arithmetic). The largest ratio
+$\Psi(n,t)/(t(n-2)+n)$ over this range is attained at $(n,t)=(11,4)$, where it
+is $<0.73$; it decreases steadily with $n$, being $<0.30$ already at $n=89$.
+
+For $n\ge201$ we argue directly. The case $r=0$ of $\Psi_B$ contributes only
+$w_0+\varepsilon\le(n+1)+\frac{n+1}2$, which is below the target for $n\ge5$,
+so we may assume $r\ge1$. In case~(B), $w_0\ge1$ gives
+\[
+  2\min\Bigl(
+    \frac{r+\sqrt{r^2+4rB}}2,
+    (t+1)r
+  \Bigr)-rw_0
+  \le
+  \sqrt{r^2+4rB}
+  \le
+  r+2\sqrt{rB}.
+\]
+Also $B\le\sigma(\sigma-1)<\sigma^2\le n^2$, since $\sigma=n-a_0\le n$.
+
+Next we bound $r$. For $n$ even, $t(t-1)+2tm=t(2n-t-1)$ is maximised over
+$0\le t\le n$ at $t\in\{n-1,n\}$, with value $n^2-n$; hence
+$q(q-1)\le n^2-n$ and $q\le n$. For $n$ odd we have
+$f\le\lfloor 4n/(n-3)\rfloor\le5$ for $n\ge11$, so Lemma~\ref{lem:q} gives
+\[
+  (q-1)^2\le q^2-2q+1\le (n^2-n)+\tfrac{15}2(n-1)+1
+  = n^2+\tfrac{13}2 n-\tfrac{13}2
+  <\Bigl(n+\tfrac{13}4\Bigr)^2 ,
+\]
+so $q<n+\frac{17}4$ and $q\le n+4$ in either case. Since $r\le q-1-\varepsilon$
+we get $r\le n+3$. Therefore, using $w_0\le t+1\le n+1$ and
+$\varepsilon\le(n+1)/2$,
+\[
+  \Psi_B(w_0)
+  \le
+  (n+1)+\frac{n+1}{2}+(n+3)+2n\sqrt{n+3}
+  \le
+  \frac52n+\frac{11}{2}+2n\sqrt{n+4}.
+\]
+For case~(A), $a_0=\frac{n-w_0}2$ gives
+$a_0(w_0+2)=\frac{(n-w_0)(w_0+2)}2\le\frac{(n+2)^2}8$, the maximum of the
+quadratic being at $w_0=\frac{n-2}2$; hence
+\[
+  \Psi_A(w_0)\le\frac{3(n+1)}2+\frac{(n+2)^2}{8}.
+\]
+
+On the other hand $t\ge(n-3)/4$ gives
+\[
+  t(n-2)+n
+  \ge
+  \frac{(n-3)(n-2)}4+n
+  =
+  \frac{n^2-n+6}{4}.
+\]
+
+For case~(A) it therefore suffices that
+$\frac{(n+2)^2}8+\frac{3(n+1)}2\le\frac{n^2-n+6}4$; multiplying by $8$, this
+reads $n^2+16n+16\le 2n^2-2n+12$, i.e.\ $n^2-18n-4\ge0$, which holds for
+$n\ge19$.
+
+For case~(B) it suffices that
+$\frac52n+\frac{11}2+2n\sqrt{n+4}\le\frac{n^2-n+6}4$, i.e.\ that
+\[
+  8n\sqrt{n+4}\le n^2-11n-16,
+  \qquad\text{equivalently}\qquad
+  64n^3+256n^2\le\bigl(n^2-11n-16\bigr)^2 ,
+\]
+both sides of the first inequality being nonnegative for $n\ge13$. Now
+$n\ge192$ gives $11n+16\le12n\le\frac{n^2}{16}$, whence
+$n^2-11n-16\ge\frac{15}{16}n^2$ and
+$\bigl(n^2-11n-16\bigr)^2\ge\frac{225}{256}n^4$; and $n\ge128$ gives
+$256n^2\le2n^3$, whence $64n^3+256n^2\le66n^3$. Since
+$\frac{225}{256}n^4\ge66n^3$ for $n\ge\frac{66\cdot256}{225}=75.1\ldots$, all
+three conditions hold for $n\ge201$, which proves the claim in that range.
+
+The ranges $11\le n\le200$ and $n\ge201$ are complementary, so the theorem
+holds for every $n\ge11$.
+\end{proof}
+
+\begin{corollary}\label{cor:residual}
+The residual inequality of Theorem~\ref{thm:residual} holds for all $n,t$.
+\end{corollary}
+
+\begin{proof}
+By Theorem~\ref{thm:small} we may assume $n\ge11$ and exclude the cases
+$n=11$, $t\le3$. If $t=1$, then $n\ge11\ge8$, so Theorem~\ref{thm:A} applies.
+If $t=2$, then either $n\ge12$ and Theorem~\ref{thm:A} applies, or $n=11$,
+which is covered by Theorem~\ref{thm:small}. Hence $t\ge3$.
+
+If $n\ge4t+4$, Theorem~\ref{thm:A} applies. Otherwise $n\le4t+3$, and
+Theorem~\ref{thm:window} together with Proposition~\ref{prop:psi} gives
+\[
+  \Phi^+\le\max\{n,\Psi(n,t)\}<t(n-2)+n,
+\]
+because $t\ge3$ and $n\ge11$ imply $n<t(n-2)+n$.
+\end{proof}
+
+\subsection*{Why the counting bound $q\le n-2$ is not enough}
+
+The reduction via Corollary~\ref{cor:count} is useful but cannot be the final
+route: the sufficient condition $q\le n-2$ is false inside the residual window.
+
+\begin{proposition}\label{prop:qcex}
+Let $n\ge6$ be even, let $[n]=M_1\sqcup M_2$ with
+$|M_1|=|M_2|=n/2$, and let $\A$ be the union closure of
+\[
+  \{M_1\setminus\{x\}:x\in M_1\}
+  \cup
+  \{M_2\setminus\{y\}:y\in M_2\}.
+\]
+Then $\A$ is separating and union-closed with $h(\A)=4$, $t=n$, $q=n$, and
+$\Phi^+=2n$.
+\end{proposition}
+
+\begin{proof}
+The closure consists of the $n$ generators, the two sets $M_i$, the sets
+$[n]\setminus\{x,y\}$ with $x\in M_1$, $y\in M_2$, all $n$ coatoms, and $[n]$.
+Union-closedness and separation are immediate, and a maximal chain
+\[
+  M_1\setminus\{x\}
+  \subsetneq
+  M_1
+  \subsetneq
+  [n]\setminus\{y\}
+  \subsetneq
+  [n]
+\]
+has four members while $\Cc$ contains no three-element chain. The members of
+size below $n/2$ are exactly the $n$ generators, each of weight $2$.
+\end{proof}
+
+For $n\ge12$ these families satisfy $n\ge11$, $t\ge3$, $n\le4t+3$, and
+$|A\cup A'|\ge(n-1)/2$ for all distinct $A,A'\in\Cp$, i.e.\ they lie in the
+residual window, and they have $q=n>n-2$. They also show that
+Lemma~\ref{lem:q} is sharp, since
+$q(q-1)=n(n-1)=t(t-1)+2tm$ there; the second family attaining equality in
+Lemma~\ref{lem:q} is that of Example~\ref{ex:sharp}, where
+$q(q-1)=6=t(t-1)+2tm$.
+
+\section{The height-four theorem and concluding remarks}\label{sec:main}
+
+\begin{theorem}\label{thm:main}
+Let $\A\subseteq2^{[n]}$ be separating and union-closed with $h(\A)=4$. Then
+\[
+  \Avg(\A)\ge\frac n2.
+\]
+Equivalently, Frankl's conjecture holds for all separating union-closed families
+of height four.
+\end{theorem}
+
+\begin{proof}
+By Corollary~\ref{cor:residual} we have $\Phi^+\le t(n-2)+n$. Since
+$\Phi\le\Phi^+$, Proposition~\ref{prop:reform} gives $\Avg(\A)\ge n/2$.
+Frankl's conjecture for this class follows from the standard double-counting
+identity: if $\Avg(\A)\ge n/2$, then some element lies in at least $|\A|/2$
+member sets.
+\end{proof}
+
+\begin{theorem}\label{thm:t2-final}
+Every separating union-closed family of height four with $t\le2$ satisfies
+$\Avg(\A)\ge n/2$.
+\end{theorem}
+
+\begin{proof}
+This is already contained in the proof of Corollary~\ref{cor:residual}: for
+$t=1$ Theorem~\ref{thm:A} covers $n\ge8$ and Theorem~\ref{thm:small} covers
+$n\le10$; for $t=2$ Theorem~\ref{thm:A} covers $n\ge12$, and
+Theorem~\ref{thm:small} covers $n\le10$ together with the case $n=11$, $t=2$.
+\end{proof}
+
+\begin{remark}
+The proof bounds $\Phi^+$ line by line rather than through the cardinality
+$q=|\Cp|$. This is unavoidable: Corollary~\ref{cor:count} gives a convenient
+sufficient condition, but Proposition~\ref{prop:qcex} shows that $q\le n-2$ is
+not available inside the residual window.
+\end{remark}
+
+\begin{remark}
+Earlier drafts formulated the remaining problem as a per-coatom bound: by
+Proposition~\ref{prop:identity}, $\Phi^+\le t(n-2)+n$ would follow from
+\[
+  \widetilde C_x\le(n-2)+\frac nt
+  \qquad(x\in T).
+\]
+That reformulation remains useful, but the closing argument above does not need
+it. The pair-line structure of $\Cp$ gives a direct global bound on $\Phi^+$.
+\end{remark}
+
+\begin{remark}
+Since $h=4$ is the last height at which averaging can work
+\cite[Thm.~3.2]{Bouchard}, Theorem~\ref{thm:main} is the natural end point of
+the averaging method for separating union-closed families.
+\end{remark}
+
+\subsection*{Machine verification}
+
+Every statement of Section~\ref{sec:closing} has been tested independently of
+its proof. The script \texttt{verify\_h4.py} enumerates separating union-closed
+families of height four from the definitions alone --- union-closedness,
+separation, and a longest chain of exactly four member sets --- and then checks
+Lemmas~\ref{lem:pair}, \ref{lem:lines}, \ref{lem:cap}, \ref{lem:fisher},
+\ref{lem:q} and~\ref{lem:local}, the assembled bound of
+Lemma~\ref{lem:local}, the value $\Psi(n,t)$ of Definition~\ref{def:psi}, the
+residual inequality of Theorem~\ref{thm:residual} and the conclusion
+$\Avg(\A)\ge n/2$ as assertions. The same assertions were added to the
+C enumerator used for Computation~I. No violation was found in any of the
+following.
+
+\begin{itemize}
+\item The complete enumerations for $n=4$ ($2\,034$ families), $n=5$
+      ($346\,028$ families) and $n=6$ with $t\le5$ ($106\,040\,636$ families),
+      whose counts agree with those of Section~\ref{sec:conj}.
+\item The families of Proposition~\ref{prop:qcex} for $8\le n\le18$, which lie
+      inside the residual window and have $q=n>n-2$, together with several
+      hundred further families constructed inside that window with
+      $10\le q\le14$.
+\item Random samples for $6\le n\le16$.
+\end{itemize}
+
+The window evaluation of Theorem~\ref{thm:window} uses exact integer upper
+bounds for the square-root term, so no floating-point arithmetic enters the
+verification; the candidate-point maximisation over $r$ was checked against a
+full integer scan for all $(n,t,w_0)$ with $n\le120$.
+
+\subsection*{Use of AI assistance}
+Large language models (Qwen, Alibaba Group; Claude, Anthropic) were used as a
+research assistant during the preparation of this work: for exploring proof
+strategies, for drafting and checking the verification code, and for language
+editing and \LaTeX\ preparation. The models were not used as authors and are not
+listed as such, in accordance with arXiv policy. All definitions, statements,
+proofs and computational verifications were formulated and validated by the
+author, who takes full responsibility for the correctness of the paper.
+
+\subsection*{Data availability}
+All code used for the computations of Sections~\ref{sec:conj}
+and~\ref{sec:closing} is publicly available in the repository cited there.
+
+\begin{thebibliography}{99}
+
+\bibitem{AHS} R.~Alweiss, B.~Huang and M.~Sellke,
+\emph{Improved lower bound for Frankl's union-closed sets conjecture},
+Electron. J. Combin. \textbf{31} (2024), \#P3.35.
+
+\bibitem{BBE} I.~Balla, B.~Bollob\'as and T.~Eccles,
+\emph{Union-closed families of sets},
+J. Combin. Theory Ser. A \textbf{120} (2013), 531--544.
+
+\bibitem{BM} I.~Bo\v{s}njak and P.~Markovi\'c,
+\emph{The $11$-element case of Frankl's conjecture},
+Electron. J. Combin. \textbf{15} (2008), \#R88.
+
+\bibitem{Bouchard} C.~Bouchard,
+\emph{An averaging result for union-closed families of sets},
+preprint (2025), \texttt{arXiv:2509.12537}.
+
+\bibitem{BruhnSchaudt} H.~Bruhn and O.~Schaudt,
+\emph{The journey of the union-closed sets conjecture},
+Graphs Combin. \textbf{31} (2015), 2043--2074.
+
+\bibitem{Cambie} S.~Cambie,
+\emph{Progress on the union-closed conjecture and offsprings in winter
+2022--2023}, preprint (2023), \texttt{arXiv:2306.12351}.
+
+\bibitem{Czedli09} G.~Cz\'edli,
+\emph{On averaging Frankl's conjecture for large union-closed sets},
+J. Combin. Theory Ser. A \textbf{116} (2009), 724--729.
+
+\bibitem{CzedliMS} G.~Cz\'edli, M.~Mar\'oti and E.~T.~Schmidt,
+\emph{On the scope of averaging for Frankl's conjecture},
+Order \textbf{26} (2009), 31--48.
+
+\bibitem{FalgasRavry} V.~Falgas-Ravry,
+\emph{Minimal weight in union-closed families},
+Electron. J. Combin. \textbf{18} (2011), \#P95.
+
+\bibitem{Frankl95} P.~Frankl,
+\emph{Extremal set systems}, in: R.~L.~Graham, M.~Gr\"otschel and L.~Lov\'asz
+(eds.), Handbook of Combinatorics, vol.~2, Elsevier, 1995, pp.~1293--1329.
+
+\bibitem{Gilmer} J.~Gilmer,
+\emph{A constant lower bound for the union-closed sets conjecture},
+preprint (2022), \texttt{arXiv:2211.09055}.
+
+\bibitem{HachimoriKashiwabara} M.~Hachimori and K.~Kashiwabara,
+\emph{On the averaging problem of ideal families related to Frankl's conjecture
+with formal proof by Lean 4}, preprint (2025), \texttt{arXiv:2504.13454}.
+
+\bibitem{Poonen} B.~Poonen,
+\emph{Union-closed families},
+J. Combin. Theory Ser. A \textbf{59} (1992), 253--268.
+
+\bibitem{Reimer} D.~Reimer,
+\emph{An average set size theorem},
+Combin. Probab. Comput. \textbf{12} (2003), 89--93.
+
+\bibitem{Sawin} W.~Sawin,
+\emph{An improved lower bound for the union-closed set conjecture},
+preprint (2023), \texttt{arXiv:2211.11504}.
+
+\bibitem{Studer} L.~Studer,
+\emph{An asymptotic version of the union-closed sets conjecture},
+preprint (2020), \texttt{arXiv:2005.00361}.
+
+\bibitem{Tian} C.~Tian,
+\emph{Union-closed sets conjecture holds for height no more than $3$ and height
+no less than $N-1$}, preprint (2022), \texttt{arXiv:2112.06659}.
+
+\end{thebibliography}
+
+\end{document}

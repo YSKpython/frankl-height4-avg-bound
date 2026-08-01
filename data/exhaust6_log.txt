@@ -1,0 +1,38 @@
+  n   t    UC-families    qualifying  max q  max Phi+   bound       labelled
+  4   1             97            35      3         6       6            140
+  4   2            141            91      3         6       8            546
+  4   3            250           201      3         6      10            804
+  4   4            641           544      4         8      12            544
+
+canonical-T families: 871   labelled families: 2034   violations: 0
+
+Process returned 0 (0x0)   execution time : 0.060 s
+***
+  n   t    UC-families    qualifying  max q  max Phi+   bound       labelled
+  5   1           1567           436      6         6       8           2180
+  5   2           2736          1555      6         8      11          15550
+  5   3           6345          5203      6         8      14          52030
+  5   4          23146         22388      7         9      17         111940
+  5   5         166953        164328     10        10      20         164328
+
+canonical-T families: 193910   labelled families: 346028   violations: 0
+
+Process returned 0 (0x0)   execution time : 0.349 s
+***
+  n   t    UC-families    qualifying  max q  max Phi+   bound       labelled
+  6   1          39989          9584      2         6      10          57504
+
+canonical-T families: 9584   labelled families: 57504   violations: 0
+
+Process returned 0 (0x0)   execution time : 0.048 s
+***
+  n   t    UC-families    qualifying  max q  max Phi+   bound       labelled
+  6   1          39989          9584      2         6      10          57504
+  6   2          84693         36837      4         8      14         552555
+  6   3         258181        170269      4        10      18        3405380
+  6   4        1339990       1144209      4        10      22       17163135
+  6   5       14171508      14143677      5        10      26       84862062
+
+canonical-T families: 15504576   labelled families: 106040636   violations: 0
+
+Process returned 0 (0x0)   execution time : 58.487 s

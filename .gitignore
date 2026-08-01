@@ -1,0 +1,20 @@
+# LaTeX build artifacts
+*.aux
+*.log
+*.out
+*.toc
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+*.pdf
+
+# Compiled binaries
+*.exe
+*.o
+exhaust
+exhaust_new
+exh
+
+# Python
+__pycache__/
+*.pyc
