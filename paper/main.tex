@@ -139,9 +139,10 @@ every maximal member of the core misses at most one element of $Z$
 (Lemma~\ref{lem:P}) and yield the master inequality
 (Theorem~\ref{thm:master}).
 
-The master inequality gives several unconditional consequences:
-$\Avg(\A)\ge n/2$ whenever $n\ge4t+4$ (Theorem~\ref{thm:A}); whenever
-$(t+1)q\le t(n-2)+n$ (Theorem~\ref{thm:B}); and whenever $t\le2$
+For separating union-closed families of height four with $4\le n$, the master
+inequality gives several consequences: $\Avg(\A)\ge n/2$ whenever
+$n\ge4t+4$ (Theorem~\ref{thm:A}), whenever
+$(t+1)q\le t(n-2)+n$ (Theorem~\ref{thm:B}), and whenever $t\le2$
 (Theorem~\ref{thm:t2-final}). The large-$n$ theorem confines the problem to the
 window $n\le4t+3$.
 
@@ -158,8 +159,11 @@ set (Lemma~\ref{lem:local}), proves the residual inequality
 \[
   \Phi^+:=\sum_{A\in\Cp}(n-2|A|)\le t(n-2)+n
 \]
-for all $n,t$ (Theorem~\ref{thm:window} and Corollary~\ref{cor:residual}). By
-Proposition~\ref{prop:reform}, this is equivalent to $\Avg(\A)\ge n/2$.
+for all admissible $n,t$ with $4\le n$ (Theorem~\ref{thm:window} and
+Corollary~\ref{cor:residual}). This residual inequality implies
+$\Avg(\A)\ge n/2$, since $\Phi\le\Phi^+$ and
+Proposition~\ref{prop:reform} characterises the average bound by
+$\Phi\le t(n-2)+n$.
 
 Thus the main theorem is the following.
 
@@ -421,7 +425,7 @@ Hence
 \end{proof}
 
 \begin{theorem}\label{thm:B}
-If $(t+1)q\le t(n-2)+n$, then $\Avg(\A)\ge n/2$.
+Assume $4\le n$. If $(t+1)q\le t(n-2)+n$, then $\Avg(\A)\ge n/2$.
 \end{theorem}
 
 \begin{proof}
@@ -830,9 +834,9 @@ i.e.
 \[
   Q(u):=2u^2-u(n+1)+(n-1)<0.
 \]
-Here $2\le u\le(n-3)/2$, and $Q$ is convex with
-$Q(2)=5-n<0$ and $Q((n-3)/2)=5-n<0$ for $n\ge6$; hence $Q<0$ on the whole
-interval, and $k_M\le\lambda$.
+Here $2\le u\le(n-3)/2$. For $n=5$ this case cannot occur. For odd $n\ge7$,
+$Q$ is convex with $Q(2)=5-n<0$ and $Q((n-3)/2)=5-n<0$; hence $Q<0$ on the
+whole interval, and $k_M\le\lambda$.
 \end{proof}
 
 \subsection*{A global bound on \texorpdfstring{$q$}{q}}
@@ -1241,16 +1245,36 @@ holds for every $n\ge11$.
 \end{proof}
 
 \begin{corollary}\label{cor:residual}
-The residual inequality of Theorem~\ref{thm:residual} holds for all $n,t$.
+For every separating union-closed family of height four with $4\le n$, the
+residual inequality of Theorem~\ref{thm:residual} holds.
 \end{corollary}
 
 \begin{proof}
 By Theorem~\ref{thm:small} we may assume $n\ge11$ and exclude the cases
-$n=11$, $t\le3$. If $t=1$, then $n\ge11\ge8$, so Theorem~\ref{thm:A} applies.
-If $t=2$, then either $n\ge12$ and Theorem~\ref{thm:A} applies, or $n=11$,
-which is covered by Theorem~\ref{thm:small}. Hence $t\ge3$.
+$n=11$, $t\le3$. If $n\ge4t+4$, we use Lemma~\ref{lem:q} to bound $q$. Since
+$t\ge1$,
+we have $n\ge8$ and $t\le(n-4)/4$. For odd $n$, Lemma~\ref{lem:q} gives
+$f=0$: indeed $t\le(n-4)/4<(n-3)/2$, below the threshold required for $f>0$.
+In either parity, the right-hand side in the bound of Lemma~\ref{lem:q} is
+therefore at most
+\[
+  t(t-1)+2tm=t(2n-t-1)
+  \le \frac{(n-4)(2n-1)}4
+  <(n-1)(n-3),
+\]
+where the strict inequality follows from $2n^2-7n+8>0$. For even $n$, if
+$q\ge n-1$ then $q(q-1)\ge(n-1)(n-2)>(n-1)(n-3)$, contradicting
+Lemma~\ref{lem:q}. For odd $n$, $q\ge n-1$ would give
+$q^2-2q\ge(n-1)(n-3)$, again a contradiction. Thus $q\le n-2$.
 
-If $n\ge4t+4$, Theorem~\ref{thm:A} applies. Otherwise $n\le4t+3$, and
+If $q=0$ then $\Phi^+=0$. If $q=1$ then $\Phi^+\le n\le t(n-2)+n$.
+If $q\ge2$, Theorem~\ref{thm:master} gives
+\[
+  \Phi^+\le q(t+1)\le(n-2)(t+1)=t(n-2)+n-2.
+\]
+Otherwise $n\le4t+3$. Since $n\ge11$, $t=1$ is impossible, and $t=2$ would
+force $n=11$, a case already excluded by Theorem~\ref{thm:small}; hence $t\ge3$.
+Then
 Theorem~\ref{thm:window} together with Proposition~\ref{prop:psi} gives
 \[
   \Phi^+\le\max\{n,\Psi(n,t)\}<t(n-2)+n,
@@ -1325,10 +1349,8 @@ $\Avg(\A)\ge n/2$.
 \end{theorem}
 
 \begin{proof}
-This is already contained in the proof of Corollary~\ref{cor:residual}: for
-$t=1$ Theorem~\ref{thm:A} covers $n\ge8$ and Theorem~\ref{thm:small} covers
-$n\le10$; for $t=2$ Theorem~\ref{thm:A} covers $n\ge12$, and
-Theorem~\ref{thm:small} covers $n\le10$ together with the case $n=11$, $t=2$.
+This follows from Corollary~\ref{cor:residual}, which proves the stronger
+residual inequality throughout the stated range.
 \end{proof}
 
 \begin{remark}
