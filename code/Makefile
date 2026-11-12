@@ -18,6 +18,7 @@ check: all
 	./exhaust 5
 	./verify_small 8 1 8 exact
 	python3 check_all.py --quick
+	python3 -m unittest test_verify_h4_exit.py
 
 clean:
 	rm -f exhaust exhaust2 verify_small

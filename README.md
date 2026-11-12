@@ -99,7 +99,7 @@ Standard library only: a C compiler and Python 3, no packages.
 
     python3 verify_h4.py                        # exact window 11..200 + tail + n=4
     python3 verify_h4.py --full --random 20000  # also n=5 exhaustive and random stress
-    python3 verify_h4.py --nmax 600 --fast      # wider window, float mode
+    python3 verify_h4.py --nmax 600 --fast      # float stress test only, not exact verification
     ./exhaust 4                                 # exhaustive: 2,034 labelled families
     ./exhaust 5                                 # exhaustive: 346,028 labelled families
     ./exhaust 6 1 5                             # exhaustive for t ≤ 5: 106,040,636
@@ -112,7 +112,8 @@ the counts are multiplied by `C(n,t)` to give labelled totals.
 
 `verify_h4.py` uses exact integer upper bounds for the square-root term by
 default, so the window evaluation of Theorem 7.10 involves no floating-point
-arithmetic. Pass `--fast` for the float version (stress tests only).
+arithmetic. Pass `--fast` for float stress tests only; those results are not exact
+verification.
 
 ## Computational results
 

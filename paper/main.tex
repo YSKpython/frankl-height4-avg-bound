@@ -557,9 +557,10 @@ regime.
 
 \section{Small ground sets and the residual inequality}\label{sec:conj}
 
-By Theorem~\ref{thm:A} we may assume $n\le4t+3$. We first record the exhaustive
-verification for small ground sets, then state the residual inequality that is
-proved in Sections~\ref{sec:closing}--\ref{sec:main}.
+Theorem~\ref{thm:A} proves the average bound when $n\ge4t+4$, but it does not
+by itself prove the stronger residual inequality for $\Phi^+$. We first record
+the exhaustive verification for small ground sets, then state the residual
+inequality proved in Sections~\ref{sec:closing}--\ref{sec:main}.
 
 \subsection*{Small ground sets}
 
@@ -678,8 +679,9 @@ Let $\A\subseteq2^{[n]}$ be separating and union-closed with $h(\A)=4\le n$. The
 \end{theorem}
 
 The proof is given in Sections~\ref{sec:closing} and~\ref{sec:main}: the finite
-verification above handles small $n$, Theorem~\ref{thm:A} handles
-$n\ge4t+4$, and Section~\ref{sec:closing} closes the remaining window
+verification above handles small cases; Corollary~\ref{cor:residual} uses
+Lemma~\ref{lem:q} and Theorem~\ref{thm:master} to handle the residual bound when
+$n\ge4t+4$; and Section~\ref{sec:closing} closes the remaining window
 $n\le4t+3$.
 
 \section{The pair structure of \texorpdfstring{$\Cc^+$}{C+} and the closing argument}
@@ -1170,9 +1172,15 @@ involves no floating-point arithmetic). The largest ratio
 $\Psi(n,t)/(t(n-2)+n)$ over this range is attained at $(n,t)=(11,4)$, where it
 is $<0.73$; it decreases steadily with $n$, being $<0.30$ already at $n=89$.
 
-For $n\ge201$ we argue directly. The case $r=0$ of $\Psi_B$ contributes only
-$w_0+\varepsilon\le(n+1)+\frac{n+1}2$, which is below the target for $n\ge5$,
-so we may assume $r\ge1$. In case~(B), $w_0\ge1$ gives
+For $n\ge201$ we argue directly. In the residual window,
+$t\ge(n-3)/4$, so the target satisfies
+$t(n-2)+n\ge(n^2-n+6)/4$. The case $r=0$ of $\Psi_B$ contributes only
+\[
+  w_0+\varepsilon\le(n+1)+\frac{n+1}2=\frac{3(n+1)}2
+  \le\frac{n^2-n+6}{4}\le t(n-2)+n,
+\]
+where the middle inequality is equivalent to $n(n-7)\ge0$ and holds for
+$n\ge201$. Thus it suffices to consider $r\ge1$. In case~(B), $w_0\ge1$ gives
 \[
   2\min\Bigl(
     \frac{r+\sqrt{r^2+4rB}}2,

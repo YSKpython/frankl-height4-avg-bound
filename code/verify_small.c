@@ -51,10 +51,11 @@ static int cl[8192], ncl;
 
 static inline int pc(int x) { return __builtin_popcount(x); }
 
-/* Theorem 7.6 / Corollary 7.7: if two selected small sets have a union of size
-   at most (n-2)/2, that union is a maximal core set and every member of C^+ is
-   contained in it, so the family already satisfies the bound.  The property is
-   inherited by every extension, so the whole subtree may be skipped. */
+/* Pair lemma (Lemma 7.1): if two selected small sets have a union of size at
+   most (n-2)/2, that union M is a maximal core set. By size and maximality,
+   every member of C^+ lies in M. Lemma 7.6(A) gives Phi+ <= n+n^2/8; Lemma 3.3
+   gives t >= n/2, so this is at most n^2/2 <= t(n-2)+n for n >= 4. This holds
+   for every valid extension. */
 static int safe_by_thm76(void)
 {
     int i, j;
