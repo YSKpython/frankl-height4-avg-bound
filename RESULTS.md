@@ -13,7 +13,7 @@ Machine: single core, gcc 13.3, Python 3.12.
 
 ---
 
-## 1. Exhaustive enumeration (`exhaust.c`)
+## 1. Exhaustive enumeration (`exhaust_new.c`)
 
 Pruning uses **only definitional constraints**: core member sets have size at
 most `n-2`, the family is union-closed, and no chain has five member sets. None

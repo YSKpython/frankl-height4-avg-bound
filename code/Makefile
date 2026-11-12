@@ -3,7 +3,7 @@ CFLAGS ?= -O3 -Wall
 
 all: exhaust exhaust2 verify_small
 
-exhaust: exhaust.c
+exhaust: exhaust_new.c
 	$(CC) $(CFLAGS) -o $@ $<
 
 exhaust2: exhaust2.c

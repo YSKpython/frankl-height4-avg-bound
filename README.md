@@ -23,7 +23,8 @@ proved it for height four under the extra hypothesis `|B| ≤ 2`, leaving
 `3 ≤ |B| ≤ 4` open. Height four is also the last height at which averaging can
 work at all.
 
-This paper proves the full height-four case, without reference to `|B|`.
+This paper proves the full height-four case in its natural range `4 ≤ n`,
+without reference to `|B|`. No empty-free assumption is made.
 By Proposition 2.1, `Avg(A) ≥ n/2` is equivalent to `Φ ≤ t(n-2)+n`, and since
 `Φ ≤ Φ⁺` everything reduces to the **residual inequality** `Φ⁺ ≤ t(n-2)+n`.
 
@@ -34,9 +35,9 @@ By Proposition 2.1, `Avg(A) ≥ n/2` is equivalent to `Φ ≤ t(n-2)+n`, and sin
 | Thm 4.3 | `Φ⁺ ≤ q(t+1)` (master inequality, sharp) |
 | Thm 4.4 | `(t+1)q ≤ t(n-2)+n ⇒ Avg(A) ≥ n/2` |
 | Thm 5.2 | `n ≥ 4t+4 ⇒ Avg(A) ≥ n/2` (no computation) |
-| Thm 6.1 | `n ≤ 10`, every `t`, and `n = 11` with `t ≤ 3` (computer-verified) |
-| Thm 6.2 | **residual inequality** `Φ⁺ ≤ t(n-2)+n`, for all `n, t` |
-| Thm 8.1 | **`Avg(A) ≥ n/2` for every separating union-closed family of height four** — equivalently, Frankl's conjecture holds for that class |
+| Thm 6.1 | `4 ≤ n ≤ 10`, every admissible `t`, and `n = 11` with `t ≤ 3` (computer-verified) |
+| Thm 6.2 | **residual inequality** `Φ⁺ ≤ t(n-2)+n`, for height-four families with `4 ≤ n` |
+| Thm 8.1 | **`Avg(A) ≥ n/2` for every separating union-closed family of height four with `4 ≤ n`**; this implies Frankl's conjecture for that class |
 
 Sections 5 and 6 leave the window `n ≥ 11`, `t ≥ 3`, `n ≤ 4t+3`. Section 7
 closes it. The mechanism is a *pair-line structure* on the small member sets:
@@ -65,9 +66,17 @@ sharp. So the proof bounds `Φ⁺` line by line rather than through `q`.
 
 ## Status
 
-The proof is complete as written, machine-checked as described below, and has
-**not yet been refereed**. Corrections and independent checks are welcome —
-please open an issue.
+The manuscript presents a proof for the corrected range `4 ≤ n`; its general
+argument has not been independently verified by this repository's regression
+tests and has **not yet been refereed**. Corrections and independent checks are
+welcome — please open an issue.
+
+The lower bound `n ≥ 4` is essential to the stated averaging theorem. On `[3]`,
+`{∅, {1}, {2}, {1,2}, [3]}` is separating and union-closed with exact height
+four, but its average set size is `7/5 < 3/2`; its Frankl frequencies are
+`(3, 3, 1)`, so this does not refute Frankl's conjecture. The theorem and its
+proof make no empty-free assumption. Average set size at least `n/2` implies
+Frankl's condition by double counting; the converse is not asserted.
 
 ## Code
 
@@ -80,7 +89,7 @@ Standard library only: a C compiler and Python 3, no packages.
 | file | what it does |
 | --- | --- |
 | `verify_h4.py` | enumerates families from the definitions and checks every statement of Section 7, the value `Ψ(n,t)`, the tail inequalities and the conclusion `Avg(A) ≥ n/2` |
-| `exhaust.c` | exhaustive enumeration of all qualifying families for a given `n`, pruning only with definitional constraints, checking every statement of the paper |
+| `exhaust_new.c` | exhaustive enumeration of all qualifying families for a given `n`, pruning only with definitional constraints, checking every statement of the paper |
 | `exhaust2.c` | the same enumeration with weight bookkeeping carried incrementally, for the large-`t` cases |
 | `verify_small.c` | branch-and-bound verification of the residual inequality by enumerating the possible *small parts* rather than the families |
 | `common.py` | shared helpers: bitmask set operations, height, closure, family generators |

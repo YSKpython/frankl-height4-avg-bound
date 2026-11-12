@@ -24,7 +24,7 @@
  *
  * (i), (ii), (iv) are definitional.  (iii), (v), (vi) are Lemmas 3.1, 3.3, 3.6
  * of the paper; all three are proved there and were independently confirmed by
- * the exhaustive enumeration of exhaust.c for n <= 6.
+ * the exhaustive enumeration of exhaust_new.c for n <= 6.
  *
  * Two cuts are applied when verifying:
  *   - branch and bound: a subtree is skipped once the current Phi^+ plus all the

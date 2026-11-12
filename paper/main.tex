@@ -31,9 +31,9 @@
 \title[Averaging in separating union-closed families of height four]
 {Averaging in separating union-closed families of height four:\\ the height-four case}
 
-\author{Yavuz Selim K\i l\i n\c{c}
+\author{Yavuz Selim K\i l\i n\c{c}}
 \thanks{Preprint and verification package archived at Zenodo:
-\url{https://doi.org/10.5281/zenodo.21739198}.}}
+\url{https://doi.org/10.5281/zenodo.21739198}.}
 \address{Independent researcher, T\"urkiye}
 \email{yavuzselim18mart@gmail.com}
 
@@ -45,7 +45,8 @@ Let $\A\subseteq 2^{[n]}$ be a separating union-closed family whose longest chai
 consists of exactly four member sets. Bouchard proved that
 $\Avg(\A)\ge n/2$ holds for such families when $|\B|\le 2$, where $\B$ is a smallest
 irredundant subfamily of $\A_{<n/2}$ spanning the same base set, and left the
-range $3\le|\B|\le4$ open. We prove the full height-four case.
+range $3\le|\B|\le4$ open. We prove the full height-four case in its natural
+range $4\le n$.
 
 Writing $T$ for the set of $x$ with $[n]\setminus\{x\}\in\A$ and $t=|T|$, we first
 prove structural lemmas about the core
@@ -65,12 +66,12 @@ largest small set, we prove the residual inequality
 \[
   \sum_{A\in\Cp}(n-2|A|)\le t(n-2)+n
 \]
-for all $n,t$. Consequently
+for all admissible $n,t$ with $4\le n$. Consequently
 \[
   \Avg(\A)\ge \frac n2
 \]
-for every separating union-closed family of height four. Equivalently, Frankl's
-conjecture holds for all separating union-closed families of height four.
+for every separating union-closed family of height four with $4\le n$.
+In particular, Frankl's conjecture holds for this class.
 \end{abstract}
 
 \maketitle
@@ -163,12 +164,12 @@ Proposition~\ref{prop:reform}, this is equivalent to $\Avg(\A)\ge n/2$.
 Thus the main theorem is the following.
 
 \begin{theorem}[Main theorem; Theorem~\ref{thm:main}]
-Let $\A\subseteq2^{[n]}$ be separating and union-closed with $h(\A)=4$. Then
+Let $\A\subseteq2^{[n]}$ be separating and union-closed with $h(\A)=4\le n$. Then
 \[
   \Avg(\A)\ge\frac n2.
 \]
-Equivalently, Frankl's conjecture holds for all separating union-closed families
-of height four.
+In particular, Frankl's conjecture holds for every separating union-closed
+family of height four with $4\le n$.
 \end{theorem}
 
 Two features of the proof are worth noting. First, it is insensitive to
@@ -602,15 +603,23 @@ further necessary conditions also verifies the cases $n=11$ with $t\le3$.
 This gives the following.
 
 \begin{theorem}\label{thm:small}
-The inequality
+For the verified range $4\le n$, the inequality
 \[
   \Phi^+\le t(n-2)+n
 \]
-holds for every $n\le10$ and every $t$, and also for $n=11$ with $t\le3$.
+holds for every $4\le n\le10$ and every admissible $t$, and also for $n=11$
+with $t\le3$.
 Consequently $\Avg(\A)\ge n/2$ for every separating union-closed family of
-height four whose ground set has at most ten elements, and also for the cases
+height four with $4\le n\le10$, and also for the cases
 $n=11$, $t\le3$.
 \end{theorem}
+
+The restriction $4\le n$ is necessary. On $[3]$, the family
+$\{\emptyset,\{1\},\{2\},\{1,2\},[3]\}$ is separating and union-closed,
+has height four, and has average size $7/5<3/2$. It lies outside the theorem's
+scope; correspondingly its $\Phi^+=5$ exceeds $t(n-2)+n=4$. This example does
+not assume that the family is empty-free, and the theorem above makes no such
+assumption.
 
 Table~\ref{tab:maxphi} lists the exact maximum of $\Phi^+$ over all admissible
 small parts for small $n$, computed with the branch-and-bound cut disabled. On
@@ -1131,7 +1140,7 @@ degenerate case $R=\varepsilon$, where it is needed.
 \end{remark}
 
 \begin{proposition}\label{prop:psi}
-For every separating union-closed family of height four on $[n]$,
+For every separating union-closed family of height four with $4\le n$ on $[n]$,
 \[
   \Phi^+\le\max\{n,\Psi(n,t)\}.
 \]
@@ -1294,12 +1303,12 @@ $q(q-1)=6=t(t-1)+2tm$.
 \section{The height-four theorem and concluding remarks}\label{sec:main}
 
 \begin{theorem}\label{thm:main}
-Let $\A\subseteq2^{[n]}$ be separating and union-closed with $h(\A)=4$. Then
+Let $\A\subseteq2^{[n]}$ be separating and union-closed with $h(\A)=4\le n$. Then
 \[
   \Avg(\A)\ge\frac n2.
 \]
-Equivalently, Frankl's conjecture holds for all separating union-closed families
-of height four.
+In particular, Frankl's conjecture holds for every separating union-closed
+family of height four with $4\le n$.
 \end{theorem}
 
 \begin{proof}
@@ -1311,7 +1320,7 @@ member sets.
 \end{proof}
 
 \begin{theorem}\label{thm:t2-final}
-Every separating union-closed family of height four with $t\le2$ satisfies
+Every separating union-closed family of height four with $4\le n$ and $t\le2$ satisfies
 $\Avg(\A)\ge n/2$.
 \end{theorem}
 

@@ -1,4 +1,4 @@
-/* exhaust2.c -- same exhaustive enumeration as exhaust.c, with the weight
+/* exhaust2.c -- same exhaustive enumeration as exhaust_new.c, with the weight
  * bookkeeping carried incrementally through the DFS so that the per-family
  * cost is O(1).  Intended for the large-t cases (n = 6, t = 6 and n = 7).
  *
@@ -10,7 +10,7 @@
  *   T4.2   Phi^+ <= q(t+1)   for q >= 2   (master inequality)
  *   T5.2   n >= 4t+4  =>  Phi <= 0  (or <= 2t+2 when q = 1)
  *
- * The remaining lemmas are structural and were checked in full by exhaust.c
+ * The remaining lemmas are structural and were checked in full by exhaust_new.c
  * for n <= 5 (all t) and n = 6 (t <= 5); FULLCHK below re-runs them on a
  * sample of the families here as an extra guard.
  *
