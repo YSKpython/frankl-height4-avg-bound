@@ -13,7 +13,7 @@ Machine: single core, gcc 13.3, Python 3.12.
 
 ---
 
-## 1. Exhaustive enumeration (`exhaust.c`)
+## 1. Exhaustive enumeration (`exhaust_new.c`)
 
 Pruning uses **only definitional constraints**: core member sets have size at
 most `n-2`, the family is union-closed, and no chain has five member sets. None
@@ -123,8 +123,8 @@ The ratio `Ψ(n,t) / (t(n-2)+n)` decreases steadily with `n`:
  ratio  0.723  0.491  0.369  0.316  0.292  0.233  0.205  0.185
 ```
 
-The paper needs only `n ≤ 200`; the same sweep in float mode is clean to
-`n = 600`.
+The paper needs only `n ≤ 200`; the same sweep in fast float stress mode is clean
+to `n = 600`. That stress run is not exact verification.
 
 The maximisation over `r` inside `Ψ` is done at a small set of candidate points
 (the two branch boundaries and the integer peak of the concave second branch).

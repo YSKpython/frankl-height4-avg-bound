@@ -698,8 +698,8 @@ def double_half(n):
 def main():
     args = sys.argv[1:]
 
-    # Default proof window: 11 <= n <= 89.
-    # The tail n >= 90 is handled by the algebraic inequality in the paper.
+    # Exact finite window in the paper: 11 <= n <= 200.
+    # The analytic tail starts at n = 201.
     nmax = 200
     if "--nmax" in args:
         nmax = int(args[args.index("--nmax") + 1])
@@ -713,11 +713,16 @@ def main():
     exact = "--fast" not in args
 
     print("=" * 70)
-    print(f"# mode: {'exact integer upper bounds' if exact else 'fast float bounds'}")
+    if exact:
+        print("# mode: exact integer upper bounds")
+    else:
+        print("# mode: fast float stress checks (not exact verification)")
     print("=" * 70)
 
-    window_sweep(nmax, exact=exact)
-    tail_check(10000)
+    failure_count = 0
+    window_failures = window_sweep(nmax, exact=exact)
+    tail_failures = tail_check(10000)
+    failure_count += len(window_failures) + tail_failures
 
     print("-" * 70)
 
@@ -725,12 +730,18 @@ def main():
         F = double_half(n)
         d = analyse(F, n)
         bad = check_family(F, n, exact)
+        predicate_failures = sum((
+            not is_union_closed(F),
+            not is_separating(F, n),
+            height(F) != 4,
+        ))
+        failure_count += len(bad) + predicate_failures
         print(
             f"[construction] n={n:2d}  UC={is_union_closed(F)} "
             f"sep={is_separating(F,n)} h={height(F)}  "
             f"t={d['t']:2d} q={d['q']:2d} (n-2={n-2:2d}) "
             f"Phi+={d['Phip']:3d} target={d['t']*(n-2)+n:4d}  "
-            f"lemma violations={len(bad)}"
+            f"lemma violations={len(bad) + predicate_failures}"
         )
 
     print("-" * 70)
@@ -758,6 +769,7 @@ def main():
             f"(max q={st['maxq']}, max Phi+={st['maxphi']})  "
             f"->  lemma violations = {st['b']}"
         )
+        failure_count += st["b"]
 
         if st["ex"]:
             print("   first counterexample:", st["ex"])
@@ -802,9 +814,17 @@ def main():
             print(f"[random] n={n:2d}: {c} families sampled")
 
         print(f"[random] total {tot} families, lemma violations = {bad}")
+        failure_count += bad
 
+    if failure_count:
+        print(f"[result] FAIL: {failure_count} verification failures")
+    elif exact:
+        print("[result] PASS: exact integer verification checks are clean")
+    else:
+        print("[result] PASS: fast float stress checks are clean (not exact verification)")
     print("=" * 70)
+    return 1 if failure_count else 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

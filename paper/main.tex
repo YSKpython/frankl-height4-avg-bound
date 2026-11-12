@@ -31,9 +31,9 @@
 \title[Averaging in separating union-closed families of height four]
 {Averaging in separating union-closed families of height four:\\ the height-four case}
 
-\author{Yavuz Selim K\i l\i n\c{c}
+\author{Yavuz Selim K\i l\i n\c{c}}
 \thanks{Preprint and verification package archived at Zenodo:
-\url{https://doi.org/10.5281/zenodo.21739198}.}}
+\url{https://doi.org/10.5281/zenodo.21739198}.}
 \address{Independent researcher, T\"urkiye}
 \email{yavuzselim18mart@gmail.com}
 
@@ -45,7 +45,8 @@ Let $\A\subseteq 2^{[n]}$ be a separating union-closed family whose longest chai
 consists of exactly four member sets. Bouchard proved that
 $\Avg(\A)\ge n/2$ holds for such families when $|\B|\le 2$, where $\B$ is a smallest
 irredundant subfamily of $\A_{<n/2}$ spanning the same base set, and left the
-range $3\le|\B|\le4$ open. We prove the full height-four case.
+range $3\le|\B|\le4$ open. We prove the full height-four case in its natural
+range $4\le n$.
 
 Writing $T$ for the set of $x$ with $[n]\setminus\{x\}\in\A$ and $t=|T|$, we first
 prove structural lemmas about the core
@@ -65,12 +66,12 @@ largest small set, we prove the residual inequality
 \[
   \sum_{A\in\Cp}(n-2|A|)\le t(n-2)+n
 \]
-for all $n,t$. Consequently
+for all admissible $n,t$ with $4\le n$. Consequently
 \[
   \Avg(\A)\ge \frac n2
 \]
-for every separating union-closed family of height four. Equivalently, Frankl's
-conjecture holds for all separating union-closed families of height four.
+for every separating union-closed family of height four with $4\le n$.
+In particular, Frankl's conjecture holds for this class.
 \end{abstract}
 
 \maketitle
@@ -138,9 +139,10 @@ every maximal member of the core misses at most one element of $Z$
 (Lemma~\ref{lem:P}) and yield the master inequality
 (Theorem~\ref{thm:master}).
 
-The master inequality gives several unconditional consequences:
-$\Avg(\A)\ge n/2$ whenever $n\ge4t+4$ (Theorem~\ref{thm:A}); whenever
-$(t+1)q\le t(n-2)+n$ (Theorem~\ref{thm:B}); and whenever $t\le2$
+For separating union-closed families of height four with $4\le n$, the master
+inequality gives several consequences: $\Avg(\A)\ge n/2$ whenever
+$n\ge4t+4$ (Theorem~\ref{thm:A}), whenever
+$(t+1)q\le t(n-2)+n$ (Theorem~\ref{thm:B}), and whenever $t\le2$
 (Theorem~\ref{thm:t2-final}). The large-$n$ theorem confines the problem to the
 window $n\le4t+3$.
 
@@ -157,18 +159,21 @@ set (Lemma~\ref{lem:local}), proves the residual inequality
 \[
   \Phi^+:=\sum_{A\in\Cp}(n-2|A|)\le t(n-2)+n
 \]
-for all $n,t$ (Theorem~\ref{thm:window} and Corollary~\ref{cor:residual}). By
-Proposition~\ref{prop:reform}, this is equivalent to $\Avg(\A)\ge n/2$.
+for all admissible $n,t$ with $4\le n$ (Theorem~\ref{thm:window} and
+Corollary~\ref{cor:residual}). This residual inequality implies
+$\Avg(\A)\ge n/2$, since $\Phi\le\Phi^+$ and
+Proposition~\ref{prop:reform} characterises the average bound by
+$\Phi\le t(n-2)+n$.
 
 Thus the main theorem is the following.
 
 \begin{theorem}[Main theorem; Theorem~\ref{thm:main}]
-Let $\A\subseteq2^{[n]}$ be separating and union-closed with $h(\A)=4$. Then
+Let $\A\subseteq2^{[n]}$ be separating and union-closed with $h(\A)=4\le n$. Then
 \[
   \Avg(\A)\ge\frac n2.
 \]
-Equivalently, Frankl's conjecture holds for all separating union-closed families
-of height four.
+In particular, Frankl's conjecture holds for every separating union-closed
+family of height four with $4\le n$.
 \end{theorem}
 
 Two features of the proof are worth noting. First, it is insensitive to
@@ -420,7 +425,7 @@ Hence
 \end{proof}
 
 \begin{theorem}\label{thm:B}
-If $(t+1)q\le t(n-2)+n$, then $\Avg(\A)\ge n/2$.
+Assume $4\le n$. If $(t+1)q\le t(n-2)+n$, then $\Avg(\A)\ge n/2$.
 \end{theorem}
 
 \begin{proof}
@@ -552,9 +557,10 @@ regime.
 
 \section{Small ground sets and the residual inequality}\label{sec:conj}
 
-By Theorem~\ref{thm:A} we may assume $n\le4t+3$. We first record the exhaustive
-verification for small ground sets, then state the residual inequality that is
-proved in Sections~\ref{sec:closing}--\ref{sec:main}.
+Theorem~\ref{thm:A} proves the average bound when $n\ge4t+4$, but it does not
+by itself prove the stronger residual inequality for $\Phi^+$. We first record
+the exhaustive verification for small ground sets, then state the residual
+inequality proved in Sections~\ref{sec:closing}--\ref{sec:main}.
 
 \subsection*{Small ground sets}
 
@@ -602,15 +608,23 @@ further necessary conditions also verifies the cases $n=11$ with $t\le3$.
 This gives the following.
 
 \begin{theorem}\label{thm:small}
-The inequality
+For the verified range $4\le n$, the inequality
 \[
   \Phi^+\le t(n-2)+n
 \]
-holds for every $n\le10$ and every $t$, and also for $n=11$ with $t\le3$.
+holds for every $4\le n\le10$ and every admissible $t$, and also for $n=11$
+with $t\le3$.
 Consequently $\Avg(\A)\ge n/2$ for every separating union-closed family of
-height four whose ground set has at most ten elements, and also for the cases
+height four with $4\le n\le10$, and also for the cases
 $n=11$, $t\le3$.
 \end{theorem}
+
+The restriction $4\le n$ is necessary. On $[3]$, the family
+$\{\emptyset,\{1\},\{2\},\{1,2\},[3]\}$ is separating and union-closed,
+has height four, and has average size $7/5<3/2$. It lies outside the theorem's
+scope; correspondingly its $\Phi^+=5$ exceeds $t(n-2)+n=4$. This example does
+not assume that the family is empty-free, and the theorem above makes no such
+assumption.
 
 Table~\ref{tab:maxphi} lists the exact maximum of $\Phi^+$ over all admissible
 small parts for small $n$, computed with the branch-and-bound cut disabled. On
@@ -665,8 +679,9 @@ Let $\A\subseteq2^{[n]}$ be separating and union-closed with $h(\A)=4\le n$. The
 \end{theorem}
 
 The proof is given in Sections~\ref{sec:closing} and~\ref{sec:main}: the finite
-verification above handles small $n$, Theorem~\ref{thm:A} handles
-$n\ge4t+4$, and Section~\ref{sec:closing} closes the remaining window
+verification above handles small cases; Corollary~\ref{cor:residual} uses
+Lemma~\ref{lem:q} and Theorem~\ref{thm:master} to handle the residual bound when
+$n\ge4t+4$; and Section~\ref{sec:closing} closes the remaining window
 $n\le4t+3$.
 
 \section{The pair structure of \texorpdfstring{$\Cc^+$}{C+} and the closing argument}
@@ -821,9 +836,9 @@ i.e.
 \[
   Q(u):=2u^2-u(n+1)+(n-1)<0.
 \]
-Here $2\le u\le(n-3)/2$, and $Q$ is convex with
-$Q(2)=5-n<0$ and $Q((n-3)/2)=5-n<0$ for $n\ge6$; hence $Q<0$ on the whole
-interval, and $k_M\le\lambda$.
+Here $2\le u\le(n-3)/2$. For $n=5$ this case cannot occur. For odd $n\ge7$,
+$Q$ is convex with $Q(2)=5-n<0$ and $Q((n-3)/2)=5-n<0$; hence $Q<0$ on the
+whole interval, and $k_M\le\lambda$.
 \end{proof}
 
 \subsection*{A global bound on \texorpdfstring{$q$}{q}}
@@ -1131,7 +1146,7 @@ degenerate case $R=\varepsilon$, where it is needed.
 \end{remark}
 
 \begin{proposition}\label{prop:psi}
-For every separating union-closed family of height four on $[n]$,
+For every separating union-closed family of height four with $4\le n$ on $[n]$,
 \[
   \Phi^+\le\max\{n,\Psi(n,t)\}.
 \]
@@ -1157,9 +1172,15 @@ involves no floating-point arithmetic). The largest ratio
 $\Psi(n,t)/(t(n-2)+n)$ over this range is attained at $(n,t)=(11,4)$, where it
 is $<0.73$; it decreases steadily with $n$, being $<0.30$ already at $n=89$.
 
-For $n\ge201$ we argue directly. The case $r=0$ of $\Psi_B$ contributes only
-$w_0+\varepsilon\le(n+1)+\frac{n+1}2$, which is below the target for $n\ge5$,
-so we may assume $r\ge1$. In case~(B), $w_0\ge1$ gives
+For $n\ge201$ we argue directly. In the residual window,
+$t\ge(n-3)/4$, so the target satisfies
+$t(n-2)+n\ge(n^2-n+6)/4$. The case $r=0$ of $\Psi_B$ contributes only
+\[
+  w_0+\varepsilon\le(n+1)+\frac{n+1}2=\frac{3(n+1)}2
+  \le\frac{n^2-n+6}{4}\le t(n-2)+n,
+\]
+where the middle inequality is equivalent to $n(n-7)\ge0$ and holds for
+$n\ge201$. Thus it suffices to consider $r\ge1$. In case~(B), $w_0\ge1$ gives
 \[
   2\min\Bigl(
     \frac{r+\sqrt{r^2+4rB}}2,
@@ -1232,16 +1253,36 @@ holds for every $n\ge11$.
 \end{proof}
 
 \begin{corollary}\label{cor:residual}
-The residual inequality of Theorem~\ref{thm:residual} holds for all $n,t$.
+For every separating union-closed family of height four with $4\le n$, the
+residual inequality of Theorem~\ref{thm:residual} holds.
 \end{corollary}
 
 \begin{proof}
 By Theorem~\ref{thm:small} we may assume $n\ge11$ and exclude the cases
-$n=11$, $t\le3$. If $t=1$, then $n\ge11\ge8$, so Theorem~\ref{thm:A} applies.
-If $t=2$, then either $n\ge12$ and Theorem~\ref{thm:A} applies, or $n=11$,
-which is covered by Theorem~\ref{thm:small}. Hence $t\ge3$.
+$n=11$, $t\le3$. If $n\ge4t+4$, we use Lemma~\ref{lem:q} to bound $q$. Since
+$t\ge1$,
+we have $n\ge8$ and $t\le(n-4)/4$. For odd $n$, Lemma~\ref{lem:q} gives
+$f=0$: indeed $t\le(n-4)/4<(n-3)/2$, below the threshold required for $f>0$.
+In either parity, the right-hand side in the bound of Lemma~\ref{lem:q} is
+therefore at most
+\[
+  t(t-1)+2tm=t(2n-t-1)
+  \le \frac{(n-4)(2n-1)}4
+  <(n-1)(n-3),
+\]
+where the strict inequality follows from $2n^2-7n+8>0$. For even $n$, if
+$q\ge n-1$ then $q(q-1)\ge(n-1)(n-2)>(n-1)(n-3)$, contradicting
+Lemma~\ref{lem:q}. For odd $n$, $q\ge n-1$ would give
+$q^2-2q\ge(n-1)(n-3)$, again a contradiction. Thus $q\le n-2$.
 
-If $n\ge4t+4$, Theorem~\ref{thm:A} applies. Otherwise $n\le4t+3$, and
+If $q=0$ then $\Phi^+=0$. If $q=1$ then $\Phi^+\le n\le t(n-2)+n$.
+If $q\ge2$, Theorem~\ref{thm:master} gives
+\[
+  \Phi^+\le q(t+1)\le(n-2)(t+1)=t(n-2)+n-2.
+\]
+Otherwise $n\le4t+3$. Since $n\ge11$, $t=1$ is impossible, and $t=2$ would
+force $n=11$, a case already excluded by Theorem~\ref{thm:small}; hence $t\ge3$.
+Then
 Theorem~\ref{thm:window} together with Proposition~\ref{prop:psi} gives
 \[
   \Phi^+\le\max\{n,\Psi(n,t)\}<t(n-2)+n,
@@ -1294,12 +1335,12 @@ $q(q-1)=6=t(t-1)+2tm$.
 \section{The height-four theorem and concluding remarks}\label{sec:main}
 
 \begin{theorem}\label{thm:main}
-Let $\A\subseteq2^{[n]}$ be separating and union-closed with $h(\A)=4$. Then
+Let $\A\subseteq2^{[n]}$ be separating and union-closed with $h(\A)=4\le n$. Then
 \[
   \Avg(\A)\ge\frac n2.
 \]
-Equivalently, Frankl's conjecture holds for all separating union-closed families
-of height four.
+In particular, Frankl's conjecture holds for every separating union-closed
+family of height four with $4\le n$.
 \end{theorem}
 
 \begin{proof}
@@ -1311,15 +1352,13 @@ member sets.
 \end{proof}
 
 \begin{theorem}\label{thm:t2-final}
-Every separating union-closed family of height four with $t\le2$ satisfies
+Every separating union-closed family of height four with $4\le n$ and $t\le2$ satisfies
 $\Avg(\A)\ge n/2$.
 \end{theorem}
 
 \begin{proof}
-This is already contained in the proof of Corollary~\ref{cor:residual}: for
-$t=1$ Theorem~\ref{thm:A} covers $n\ge8$ and Theorem~\ref{thm:small} covers
-$n\le10$; for $t=2$ Theorem~\ref{thm:A} covers $n\ge12$, and
-Theorem~\ref{thm:small} covers $n\le10$ together with the case $n=11$, $t=2$.
+This follows from Corollary~\ref{cor:residual}, which proves the stronger
+residual inequality throughout the stated range.
 \end{proof}
 
 \begin{remark}
