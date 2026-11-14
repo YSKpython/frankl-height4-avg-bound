@@ -21,7 +21,7 @@ python verify_h4.py --full --random 20000
 # Wider window stress test (fast float mode):
 python verify_h4.py --nmax 600 --fast
 
-# Wider window with exact integer upper bounds (slower):
+# Wider window with exact full joint domain (slower):
 python verify_h4.py --nmax 600
 """
 
@@ -141,236 +141,73 @@ def Qbound(n, t):
     return q
 
 
-# ------------------------------------------------------- fast float Psi -----
+# ------------------------------------------ corrected joint envelope -------
 
-def _obj_float(r, B, w0, t):
+def weight_parameters(n, t, w):
+    """Definition 7.7, including Nat subtraction before casting in Lean.
+
+    Parity and 1 <= w <= t+1 <= n+1 imply w <= n, so a is nonnegative.
+    z <= sigma implies B >= 0, including z=0 and z=1.
     """
-    2*min(CauchySchwarz(r), (t+1)r) - r*w0.
-    Concave in r.
+    a = (n - w) // 2
+    sigma = (n + w) // 2
+    z = max(0, n - t - a)
+    B = sigma * (sigma - 1) - z * (z - 1)
+    E = 0 if n % 2 == 0 or w >= 2 else (1 if fmax(n, t) == 0 else (n + 1) // 2)
+    assert a >= 0 and 0 <= z <= sigma and B >= 0
+    return a, B, E
+
+
+def joint_domain(q, E):
+    """Exactly e <= E, rho+e+1 <= q; empty when q=0. No endpoint cut."""
+    for e in range(min(E, q - 1) + 1):
+        for rho in range(q - e):
+            yield e, rho
+
+
+def candidate_test(t, w, e, rho, B, target):
+    """Exact strict test for w+e+min(linear bracket, sqrt bracket) < target.
+
+    D>=0 is checked even when the linear branch passes. The square-root
+    branch is sqrt(D) < M iff M>0 and D<M*M. Equality is never accepted.
+    This also handles rho=0 without division or a special exemption.
     """
-    cs = (r + sqrt(r * r + 4.0 * r * B)) / 2.0
-    return 2.0 * min(cs, (t + 1.0) * r) - r * w0
+    D = rho * rho + 4 * rho * B
+    linear = w + e + 2 * (t + 1) * rho - rho * w
+    M = target - w - e + rho * (w - 1)
+    return D >= 0 and (linear < target or (M > 0 and D < M * M))
 
 
-def _max_obj_float(R, B, w0, t):
+def psi_value(n, t, exact):
+    """Full joint maximum; exact=True returns a safe integer upper bound.
+
+    This diagnostic bound uses ceil(sqrt(D)); window acceptance instead uses
+    candidate_test and does not round square roots. Zero totalizes empty sets.
     """
-    Exact max over integers 1..R of the concave float objective,
-    found by ternary search plus final scan.
-    """
-    if R <= 0:
-        return -1.0e100
-
-    lo, hi = 1, R
-    while hi - lo > 2:
-        m1 = lo + (hi - lo) // 3
-        m2 = hi - (hi - lo) // 3
-        if _obj_float(m1, B, w0, t) < _obj_float(m2, B, w0, t):
-            lo = m1 + 1
-        else:
-            hi = m2 - 1
-
-    return max(_obj_float(r, B, w0, t) for r in range(lo, hi + 1))
-
-
-def psi_float(n, t):
-    """
-    Float version of Psi.  Fast, good for stress tests.
-    """
-    m = n - t
-    R = max(1, Qbound(n, t) - 1)
-    best = -1.0e100
-
-    for w0 in range(1, min(t + 1, n) + 1):
-        if (n - w0) % 2:
+    q = Qbound(n, t)
+    best = 0
+    for w in range(1, t + 2):
+        if w % 2 != n % 2:
             continue
-
-        a0 = (n - w0) // 2
-        sig = (n + w0) // 2
-        z0 = max(0, m - a0)
-        B = float(sig * (sig - 1) - z0 * (z0 - 1))
-
-        eps = 0
-        if n % 2 == 1 and w0 == 1:
-            eps = (n + 1) // 2 if fmax(n, t) > 0 else 1
-
-        # r = 0 is admissible (L may be empty); the bracket is 0 there.
-        Rw = max(0, R - eps)
-
-        caseA = w0 + eps + a0 * (w0 + 2) if w0 <= 2 * t + 2 - n else -1.0e100
-        caseB = w0 + eps + max(0.0, _max_obj_float(Rw, B, w0, t))
-        tot = max(caseA, caseB)
-
-        if tot > best:
-            best = tot
-
-    return best
-
-
-# --------------------------------------------- exact integer Psi upper ------
-
-def _obj_upper_int(r, B, w0, t):
-    """
-    Integer upper bound for
-        2*min(cs(r), (t+1)r) - r*w0,
-    where cs(r) = (r + sqrt(r^2 + 4Br)) / 2.
-
-    We use ceil(sqrt(...)), hence this is a safe upper bound.
-    """
-    if r <= 0:
-        return -10**30
-
-    D = r * r + 4 * r * B
-    s = isqrt(D)
-    if s * s < D:
-        s += 1
-
-    # 2*cs <= r + s, and 2*(t+1)r is exact.
-    return min(r + s, 2 * (t + 1) * r) - r * w0
-
-
-def _h2_increases(r, B, c):
-    """
-    Exact integer test for
-        h2(r+1) >= h2(r),
-    where
-        h2(r) = sqrt(r^2 + 4Br) - c r,
-        c = w0 - 1 >= 0.
-
-    Used to find the integer maximum of the concave second branch.
-    """
-    if c <= 0:
-        return True
-
-    D1 = r * r + 4 * B * r
-    delta = 2 * r + 1 + 4 * B
-    L = delta - c * c
-
-    if L < 0:
-        return False
-
-    # Need L >= 2c sqrt(D1).  Both sides nonnegative, square.
-    return L * L >= 4 * c * c * D1
-
-
-def _h2_peak(lo, hi, B, c):
-    """
-    Integer maximiser of h2 on [lo, hi], assuming h2 is concave.
-    """
-    if lo >= hi:
-        return lo
-
-    # Find largest r in [lo, hi-1] such that h2(r+1) >= h2(r).
-    l, h = lo, hi - 1
-    ans = lo - 1
-
-    while l <= h:
-        mid = (l + h) // 2
-        if _h2_increases(mid, B, c):
-            ans = mid
-            l = mid + 1
-        else:
-            h = mid - 1
-
-    if ans < lo:
-        return lo
-
-    return min(ans + 1, hi)
-
-
-def _max_obj_upper_int(R, B, w0, t):
-    """
-    Safe integer upper bound for max_{1 <= r <= R} objective.
-
-    The objective is piecewise:
-      - linear while cs >= (t+1)r;
-      - h2(r) = sqrt(r^2+4Br) - (w0-1)r afterwards.
-
-    We maximise the real objective exactly enough, then evaluate an integer
-    upper bound at the relevant integer candidates.
-    """
-    if R <= 0:
-        return -10**30
-
-    c = w0 - 1
-    denom = t * (t + 1)
-
-    if denom <= 0 or B <= 0:
-        r_cs_start = 1
-    else:
-        # cs(r) <= (t+1)r  iff  r >= B / (t(t+1)).
-        r_cs_start = (B + denom - 1) // denom
-        if r_cs_start < 1:
-            r_cs_start = 1
-
-    candidates = set()
-
-    # Linear part: r < r_cs_start.
-    lin_end = min(R, r_cs_start - 1)
-    if lin_end >= 1:
-        candidates.add(lin_end)
-
-    # Second part: r >= r_cs_start.
-    lo = max(1, r_cs_start)
-    if lo <= R:
-        candidates.add(lo)
-        candidates.add(R)
-
-        peak = _h2_peak(lo, R, B, c)
-        for d in range(-5, 6):
-            candidates.add(peak + d)
-    else:
-        candidates.add(R)
-
-    # Boundaries, for safety.
-    candidates.add(1)
-    candidates.add(R)
-
-    best = -10**30
-    for r in candidates:
-        if 1 <= r <= R:
-            val = _obj_upper_int(r, B, w0, t)
-            if val > best:
-                best = val
-
+        a, B, E = weight_parameters(n, t, w)
+        if w + n <= 2 * t + 2:
+            best = max(best, w + E + a * (w + 2))
+        for e, rho in joint_domain(q, E):
+            D = rho * rho + 4 * rho * B
+            root = isqrt(D) if exact else sqrt(D)
+            if exact and root * root < D:
+                root += 1
+            bracket = min(rho + root, 2 * (t + 1) * rho) - rho * w
+            best = max(best, w + e + bracket)
     return best
 
 
 def psi_upper_int(n, t):
-    """
-    Integer upper bound for Psi(n,t).  If this is <= target, the inequality
-    is rigorously verified for that (n,t), up to the correctness of the
-    integer arithmetic.
-    """
-    m = n - t
-    R = max(1, Qbound(n, t) - 1)
-    best = -10**30
+    return psi_value(n, t, True)
 
-    for w0 in range(1, min(t + 1, n) + 1):
-        if (n - w0) % 2:
-            continue
 
-        a0 = (n - w0) // 2
-        sig = (n + w0) // 2
-        z0 = max(0, m - a0)
-        B = sig * (sig - 1) - z0 * (z0 - 1)
-
-        eps = 0
-        if n % 2 == 1 and w0 == 1:
-            eps = (n + 1) // 2 if fmax(n, t) > 0 else 1
-
-        # r = 0 is admissible (L may be empty); the bracket is 0 there.
-        Rw = max(0, R - eps)
-
-        caseA = w0 + eps + a0 * (w0 + 2) if w0 <= 2 * t + 2 - n else -10**30
-        caseB = w0 + eps + max(0, _max_obj_upper_int(Rw, B, w0, t))
-        tot = max(caseA, caseB)
-
-        if tot > best:
-            best = tot
-
-    if best < 0:
-        return 0
-    return best
+def psi_float(n, t):
+    return psi_value(n, t, False)
 
 
 # ---------------------------------------------------------------- cache -----
@@ -388,77 +225,74 @@ def psi_cached(n, t, exact=False):
 # ------------------------------------------------------- window sweep -------
 
 def window_sweep(nmax=200, verbose=True, exact=True):
+    """Check EVERY corrected candidate, with independent pre-pass counts.
+
+    No family enumeration or optimizer reduction supplies this certificate.
+    --fast is diagnostic only; exact mode is mandatory for the paper result.
     """
-    Theorem (window): Psi(n,t) <= t(n-2)+n for n>=11, t>=3, n<=4t+3.
-
-    exact=True uses integer upper bounds.
-    exact=False uses fast float bounds.
-    """
-    fails = []
-    worst = (0.0, None)
-
-    for n in range(11, nmax + 1):
-        tlo = max(3, -(-(n - 3) // 4))  # ceil((n-3)/4), but at least 3
-        for t in range(tlo, n + 1):
-            b = psi_cached(n, t, exact)
-            tgt = t * (n - 2) + n
-
-            if exact:
-                bad = b > tgt
-            else:
-                bad = b > tgt + 1.0e-9
-
-            if bad:
-                fails.append((n, t, b, tgt))
-
-            ratio = float(b) / float(tgt)
-            if ratio > worst[0]:
-                worst = (ratio, (n, t))
-
+    from time import perf_counter
+    pairs = [(n, t) for n in range(11, nmax + 1) for t in range(3, n + 1)
+             if n <= 4 * t + 3]
+    triples = sum((t + 1 + n % 2) // 2 for n, t in pairs)
+    if nmax == 200:
+        assert (len(pairs), triples) == (15294, 644389)
     if verbose:
-        mode = "exact" if exact else "fast"
-        print(f"[window]  {mode} 11 <= n <= {nmax}: violations = {len(fails)}"
-              f"   worst Psi/target = {worst[0]:.3f} at (n,t) = {worst[1]}")
-        for f in fails[:10]:
-            print("   FAIL", f)
-
+        print(f"[coverage] parameter_pairs={len(pairs)} weight_triples={triples}", flush=True)
+    start = perf_counter()
+    maximal = nonmaximal = 0
+    fails = []
+    for n, t in pairs:
+        q = Qbound(n, t)
+        target = t * (n - 2) + n
+        assert 0 < target  # zero sentinel
+        for w in range(1, t + 2):
+            if w % 2 != n % 2:
+                continue
+            a, B, E = weight_parameters(n, t, w)
+            if w + n <= 2 * t + 2:
+                maximal += 1
+                value = w + E + a * (w + 2)
+                if value >= target:
+                    fails.append(dict(kind="maximal", n=n, t=t, w=w,
+                                      value=value, target=target))
+            for e, rho in joint_domain(q, E):
+                nonmaximal += 1
+                passed = candidate_test(t, w, e, rho, B, target)
+                if not exact:
+                    D = rho*rho + 4*rho*B
+                    passed = w+e+min(rho+sqrt(D), 2*(t+1)*rho)-rho*w < target
+                if not passed:
+                    D = rho*rho + 4*rho*B
+                    M = target-w-e+rho*(w-1)
+                    fails.append(dict(kind="nonmaximal", n=n, t=t, w=w, e=e,
+                                      rho=rho, Q=q, E=E, B=B, target=target,
+                                      linear=w+e+2*(t+1)*rho-rho*w,
+                                      D=D, M=M, M_squared=M*M))
+    if nmax == 200:
+        assert (maximal, nonmaximal) == (353400, 128154974)
+    if verbose:
+        print(f"[window] {'exact' if exact else 'FLOAT DIAGNOSTIC'} 11..{nmax}: "
+              f"maximal={maximal} nonmaximal={nonmaximal} "
+              f"violations={len(fails)} seconds={perf_counter()-start:.3f}", flush=True)
+        for failure in fails[:10]:
+            print("   FAIL", failure)
     return fails
 
 
 def tail_check(nstop=10000, nstart=201, verbose=True):
-    """
-    Checks every inequality used in the tail half of Theorem (window),
-    i.e. for n >= nstart = 201.  All arithmetic is exact integer arithmetic.
-
-    (a) case B, final cubic form:  64 n^3 + 256 n^2 <= (n^2 - 11n - 16)^2
-    (b) the three chain steps used to prove (a):
-            11n + 16 <= n^2/16          (n >= 192)
-            256 n^2  <= 2 n^3           (n >= 128)
-            (225/256) n^4 >= 66 n^3     (n >= 76)
-    (c) case A:  n^2 - 18n - 4 >= 0
-    (d) the r = 0 branch:  w0 + eps <= (n^2 - n + 6)/4
-    (e) q <= n+4 for n odd, via f <= 5
-    """
+    """Exact cross-checks of the corrected analytic argument (not its proof)."""
     bad = 0
     for n in range(nstart, nstop + 1):
-        if 64 * n**3 + 256 * n**2 > (n**2 - 11 * n - 16)**2:
-            bad += 1
-        if 16 * (11 * n + 16) > n**2:
-            bad += 1
-        if 256 * n**2 > 2 * n**3:
-            bad += 1
-        if 225 * n**4 < 66 * 256 * n**3:
-            bad += 1
-        if n**2 - 18 * n - 4 < 0:
-            bad += 1
-        if 4 * (3 * (n + 1)) > 2 * (n**2 - n + 6):        # r = 0 branch
-            bad += 1
-        if n % 2 == 1:
-            if (4 * n) // (n - 3) > 5:                    # f <= 5
-                bad += 1
-            # (q-1)^2 <= n^2 - n + (15/2)(n-1) + 1 < (n + 13/4)^2, cleared by 16
-            if 16 * (n**2 - n) + 120 * (n - 1) + 16 > (4 * n + 13)**2:
-                bad += 1
+        # Each strict comparison used in the corrected analytic proof.
+        conditions = [
+            n*n-196*(n+3) == 417+(n-201)*(n+5),
+            n*n > 196*(n+3),
+            n*n-18*n-4 > 0,
+            3*n*n-77*n-84 > 0,
+            (4*n)//(n-3) <= 5,
+            16*(n*n-n)+120*(n-1)+16 < (4*n+13)**2,
+        ]
+        bad += sum(not condition for condition in conditions)
 
     if verbose:
         print(f"[tail]    n={nstart}..{nstop}: tail inequality violations = {bad}")
@@ -698,8 +532,7 @@ def double_half(n):
 def main():
     args = sys.argv[1:]
 
-    # Default proof window: 11 <= n <= 89.
-    # The tail n >= 90 is handled by the algebraic inequality in the paper.
+    # Corrected finite window 11..200; analytic tail starts at 201.
     nmax = 200
     if "--nmax" in args:
         nmax = int(args[args.index("--nmax") + 1])
@@ -713,11 +546,11 @@ def main():
     exact = "--fast" not in args
 
     print("=" * 70)
-    print(f"# mode: {'exact integer upper bounds' if exact else 'fast float bounds'}")
+    print(f"# mode: {'exact strict integer tests' if exact else 'float diagnostics only'}")
     print("=" * 70)
 
-    window_sweep(nmax, exact=exact)
-    tail_check(10000)
+    if window_sweep(nmax, exact=exact) or tail_check(10000):
+        raise SystemExit(1)
 
     print("-" * 70)
 
@@ -732,6 +565,9 @@ def main():
             f"Phi+={d['Phip']:3d} target={d['t']*(n-2)+n:4d}  "
             f"lemma violations={len(bad)}"
         )
+
+        if bad or not is_union_closed(F) or not is_separating(F, n) or height(F) != 4:
+            raise AssertionError(("construction verification failed", n, sorted(F), bad))
 
     print("-" * 70)
 
@@ -760,7 +596,7 @@ def main():
         )
 
         if st["ex"]:
-            print("   first counterexample:", st["ex"])
+            raise AssertionError(("family verification failed", st["ex"]))
 
         if "--full" not in args and n == 4:
             print("   (run with --full to also enumerate n=5: 346028 families)")
@@ -802,6 +638,8 @@ def main():
             print(f"[random] n={n:2d}: {c} families sampled")
 
         print(f"[random] total {tot} families, lemma violations = {bad}")
+        if bad:
+            raise SystemExit(1)
 
     print("=" * 70)
 

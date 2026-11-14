@@ -3,13 +3,16 @@
 Raw output of the verification programs.
 
 Nothing here is assumed by the proofs in the paper except where explicitly
-stated. Theorem 6.1 (`n ≤ 10`, and `n = 11` with `t ≤ 3`) is the one result that
+stated. Theorem 6.1 (`4 ≤ n ≤ 10`, and `n = 11` with `t ≤ 3`) is the one result that
 depends on computation for its content; the finite half of Theorem 7.10 is a
 finite evaluation of the explicit function `Ψ(n,t)` of Definition 7.7, carried
 out in exact integer arithmetic. Everything else below is a test of statements
 that are proved in the paper, run independently of their proofs.
 
-Machine: single core, gcc 13.3, Python 3.12.
+Historical runs: single core, gcc 13.3, Python 3.12. The current corrected
+window run uses Python 3.12.14 (and GCC 14.2.0 for the C checks).
+`data/verify_log.txt` records the former envelope/window and is preserved as
+historical data, not evidence for the corrected envelope.
 
 ---
 
@@ -98,66 +101,52 @@ only at `(n,t) = (4,1)`, by the family `2^[3]\{∅} ∪ {[4]}` of Example 4.6.
  n = 11 : t = 1,2,3  1.6·10^6 – 1.7·10^7 states     max Phi+ 11   VERIFIED
 ```
 
-**Conclusion.** The residual inequality holds for every `n ≤ 10` and every `t`,
+**Conclusion.** The residual inequality holds for every `4 ≤ n ≤ 10` and every `t`,
 and for `n = 11` with `t ≤ 3`. This is Theorem 6.1 of the paper.
 
 ---
 
 ## 3. The closing argument (`verify_h4.py`)
 
-### 3.1 Window evaluation of Theorem 7.10
+### 3.1 Corrected joint-domain window (current run)
 
-The finite half of Theorem 7.10 evaluates `Ψ(n,t)` of Definition 7.7 for every
-`(n,t)` with `n ≥ 11`, `t ≥ 3`, `n ≤ 4t+3`. The square-root term is bounded by
-`isqrt` rounded upwards, so the evaluation is a chain of exact integer
-comparisons with no floating-point arithmetic.
+The previous fixed-cap range and its numerical ratios/candidate-point checks
+are superseded. Definition 7.7 now maximizes jointly over
+`0 <= e <= E(n,t,w)` and `rho+e+1 <= Q(n,t)`.
 
-```
-[window]  exact 11 <= n <= 200: violations = 0   worst Psi/target = 0.723 at (n,t) = (11,4)
-```
-
-The ratio `Ψ(n,t) / (t(n-2)+n)` decreases steadily with `n`:
+Command, from `code/`: `python3 verify_h4.py` (Python 3, standard library).
+The count of pairs and parity weights is computed before any acceptance test.
+The full joint domain is enumerated, without a search reduction:
 
 ```
- n      11     20     40     60     89    120    160    200
- ratio  0.723  0.491  0.369  0.316  0.292  0.233  0.205  0.185
+[coverage] parameter_pairs=15294 weight_triples=644389
+[window] exact 11..200: maximal=353400 nonmaximal=128154974 violations=0 seconds=38.227
 ```
 
-The paper needs only `n ≤ 200`; the same sweep in float mode is clean to
-`n = 600`.
+Each candidate passes a strict integer comparison: its linear branch is below
+`T`, or `M>0` and `D<M*M`, with `D>=0`. No square root is rounded for acceptance.
+Eligible maximal candidates and the zero sentinel are checked directly.
+Counts match the independent enumeration in Prometheus TASK-048I.
 
-The maximisation over `r` inside `Ψ` is done at a small set of candidate points
-(the two branch boundaries and the integer peak of the concave second branch).
-This was cross-checked against a **full integer scan over `1 ≤ r ≤ R`** for
-every `(n, t, w₀)` with `n ≤ 120`: the candidate maximum equals the full-scan
-maximum in every case, deficit zero. The integer version was also confirmed to
-dominate the float version everywhere in that range.
+### 3.2 Empty domains and zero lines
 
-### 3.2 The `r = 0` branch
+The envelope includes a zero sentinel, so empty candidate classes are harmless.
+Every feasible `rho=0` candidate is checked by the same strict integer test.
+The actual external degree is a variable `e`, distinct from the cap `E`;
+replacing it by `E` while reducing the line range is not justified.
+Boundary regressions are in `code/test_verify_h4.py`.
 
-`Ψ_B` admits `r = 0`, since the set `L` of lines through `A₀` may be empty
-(Remark 7.8). Checked directly: over `11 ≤ n ≤ 120` and all `(t, w₀)`, the
-maximum over `r ≥ 1` is never negative, so admitting `r = 0` changes `Ψ` only in
-the degenerate case `R = ε`, where it is needed. Including it leaves the window
-sweep clean.
+### 3.3 Corrected analytic tail
 
-### 3.3 Tail inequalities (`n ≥ 201`)
-
-Every inequality used in the tail half of Theorem 7.10 is re-checked in exact
-integer arithmetic for `201 ≤ n ≤ 10,000`:
+The manuscript follows the checked TASK-048J argument: `Q<=n+4`,
+`e<=(n+1)/2`, `rho<=n+3`, `0<=B<=n*n`, and
+`sqrt(n+3)<=n/14` for `n>=201`. The remaining strict gap numerators are
+`n*n-18*n-4` and `3*n*n-77*n-84`; at `201` they are 36,779 and 105,642.
+The exact diagnostic rechecks these inequalities through `n=10,000`:
 
 ```
-[tail]    n=201..10000: tail inequality violations = 0
+[tail] n=201..10000: tail inequality violations = 0
 ```
-
-The inequalities are: `64n³ + 256n² ≤ (n² - 11n - 16)²`; the three chain steps
-`11n + 16 ≤ n²/16`, `256n² ≤ 2n³`, `(225/256)n⁴ ≥ 66n³`; the case-(A) bound
-`n² - 18n - 4 ≥ 0`; the `r = 0` branch `w₀ + ε ≤ (n² - n + 6)/4`; and
-`f ≤ 5` together with the `q ≤ n+4` estimate for odd `n`.
-
-The earlier draft started the tail at `n = 90`, where the step
-`n² - 11n - 16 ≥ (7/8)n²` holds by a margin of 6.5. Moving the finite range to
-`n ≤ 200` and the tail to `n ≥ 201` removes that tightness.
 
 ### 3.4 Extremal and window families
 
@@ -209,7 +198,7 @@ constrain what a different proof of the same result can look like.
 
 ---
 
-## 5. What is not verified
+## 5. Scope of the computations and formal proof
 
 The computations test the statements of the paper; they do not verify its
 proofs. Exhaustive enumeration reaches `n = 6`, so no computation here would
@@ -217,4 +206,9 @@ detect an error that first appears at larger `n`. The window evaluation of
 Theorem 7.10 verifies the arithmetic of Definition 7.7, not the lemmas that
 establish `Φ⁺ ≤ Ψ(n,t)`.
 
+The separate Lean proof is merged in [Prometheus PR #9](https://github.com/YSKpython/incognito_lab/pull/9),
+commit `8ba5fd01228e54e01c2f0001dc2041564f435ce0`. Its audited
+`Prometheus.Frankl.heightFourAveraging` proves the division-free averaging
+bound for a full finite base, separating union-closed family of height exactly
+four and `n >= 4`. See [VERIFICATION.md](VERIFICATION.md) for the correspondence.
 The paper has not been refereed.
